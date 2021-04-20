@@ -33,8 +33,8 @@ class User(models.Model):
 
 class Review(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='review')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='review')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_review')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_review')
     content = models.TextField()
     images = models.ImageField(null=True)
     rate = models.IntegerField()
@@ -44,7 +44,7 @@ class Review(models.Model):
 
 class Category(models.Model):
 
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='review')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='category')
     name = models.CharField(max_length=100)
 
     def __str__(self):  # pragma: no cover
@@ -53,7 +53,7 @@ class Category(models.Model):
 
 class Ingredient(models.Model):
 
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='review')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredient')
     content = models.TextField()
 
     def __str__(self):  # pragma: no cover
@@ -61,7 +61,7 @@ class Ingredient(models.Model):
 
 class Direction(models.Model):
 
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='review')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='direction')
     content = models.TextField()
 
     def __str__(self):  # pragma: no cover
@@ -69,8 +69,8 @@ class Direction(models.Model):
 
 class ShopList(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shoplist')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='shoplist')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_shoplist')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_shoplist')
     status = models.IntegerField(default=1)
     def __str__(self):  # pragma: no cover
         return f"#{self.id} {self.user}"
@@ -160,8 +160,8 @@ class FoodNutrition(models.Model):
 
 class MatchFood(models.Model):
 
-    food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name="match")
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='match')
+    food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name="food_match")
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_match')
 
     def __str__(self):  # pragma: no cover
         return f"{self.food} and {self.recipe}"
