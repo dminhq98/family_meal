@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+Shopping List
+{% endblock %}
+
+{% block content %}
+    <!-- Product Section Begin -->
+    <section class="product spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-5">
+                    <div class="sidebar">
+                        <div class="sidebar__item">
+                            <h4>Department</h4>
+                            <ul>
+                                <li><a href="#">Add recipe</a></li>
+                                <li><a href="#">Shared recipes</a></li>
+                                <li><a href="#">Favorite recipes</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-7">
+                    <div class="section-title product__discount__title">
+                        <h2>Shared recipes</h2>
+                    </div>
+                    <div class="shoping__cart__table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="shoping__product">Recipe</th>
+                                    <!-- <th>Date</th> -->
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="shoping__cart__item">
+                                        <img src="img/cart/cart-1.jpg" alt="">
+                                        <h5>Vegetable’s Package</h5>
+                                    </td>
+                                    <td class="shoping__cart__quantity">
+                                        <button class="btn btn-warning" data-toggle="modal" data-target="#editBookModal">Edit</button>
+                                    </td>
+                                    <td class="shoping__cart__total">
+                                        <button class="btn btn-danger" data-toggle="modal"
+                                            data-target="#deleteBookModal">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="shoping__cart__item">
+                                        <img src="img/cart/cart-1.jpg" alt="">
+                                        <h5>Vegetable’s Package</h5>
+                                    </td>
+                                    <td class="shoping__cart__quantity">
+                                        <button class="btn btn-warning" data-toggle="modal" data-target="#editBookModal">Edit</button>
+                                    </td>
+                                    <td class="shoping__cart__total">
+                                        <button class="btn btn-danger" data-toggle="modal"
+                                            data-target="#deleteBookModal">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="shoping__cart__item">
+                                        <img src="img/cart/cart-1.jpg" alt="">
+                                        <h5>Vegetable’s Package</h5>
+                                    </td>
+                                    <td class="shoping__cart__quantity">
+                                        <button class="btn btn-warning" data-toggle="modal" data-target="#editBookModal">Edit</button>
+                                    </td>
+                                    <td class="shoping__cart__total">
+                                        <button class="btn btn-danger" data-toggle="modal"
+                                            data-target="#deleteBookModal">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Product Section End -->
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

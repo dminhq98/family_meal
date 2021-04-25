@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}
+Log in
+{% endblock %}
+
+{% block content %}
+<!--  Product Section Begin -->
+<section class="product spad" xmlns="http://www.w3.org/1999/html">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 col-md-2">
+                </div>
+                <div class="col-lg-9 col-md-7">
+                    <div class="signin__form">
+                        <div class="tab-content">
+                                <div class="signin__form__text">
+                                    <form action="{% url 'login' %}" method='POST' >
+                                        {% csrf_token %}
+                                        {% for key,value in form.errors.items %}
+                                        <div class="alert alert-danger">
+                                            {{value}}
+                                        </div>
+                                        {% endfor %}
+                                        <p><label>User Name :</label>{{form.username}}</p>
+                                        <p><label>Password :</label>{{form.password}}</p>
+                                        <input type="hidden" name='next' value="/"/>
+<!--                                        <input type="username" placeholder="User Name*">-->
+<!--                                        <input type="password" placeholder="Password">-->
+                                        <button type="submit" class="site-btn">Log In</button>
+                                    </form>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

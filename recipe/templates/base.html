@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ogani Template">
+    <meta name="keywords" content="Ogani, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/elegant-icons.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/nice-select.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/recipe.css' %}" type="text/css">
+</head>
+
+<body>
+    <!-- Header Section Begin -->
+    <header class="header">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="header__logo">
+                        <a href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                </div>
+                <div class="col-lg-1">
+                    <div class="header__cart">
+                        <div class="header__top__right__auth">
+                            {% if user.is_authenticated %}
+                               <a href="{% url 'share_recipe' %}"><i class="fa fa-user"></i> {{ user.username }}</a>
+                            {% else %}
+                            <a href="{% url 'login' %}"><i class="fa fa-user"></i> Log In</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-1">
+                    <div class="header__cart">
+                        <div class="header__top__right__auth">
+                            {% if user.is_authenticated %}
+                              <a href="{% url 'logout' %}"><i class="fa fa-sign-in" aria-hidden="true"></i>Log Out</a>
+                            {% else %}
+                            <a href="{% url 'sign_in' %}"><i class="fa fa-sign-in" aria-hidden="true"></i> Sign up</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="humberger__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+
+    <!-- Hero Section Begin -->
+    <section class="hero">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="hero__search__form">
+                        <button type="submit" class="btn btn-outline-secondary text-dark btn-lg" data-toggle="modal" data-target="#searchbyingredient">Search by Ingredient</button>
+                        <button type="submit" class="btn btn-outline-secondary text-dark btn-lg" data-toggle="modal" data-target="#searchbyimage">Search by Image</button>
+                    </div>
+                    <!-- <div class="hero__categories">
+                        <div class="hero__categories__all">
+                            <i class="fa fa-bars"></i>
+                            <span>All departments</span>
+                        </div>
+                        <ul>
+                            <li><a href="#">Fresh Meat</a></li>
+                            <li><a href="#">Vegetables</a></li>
+                            <li><a href="#">Fruit & Nut Gifts</a></li>
+                            <li><a href="#">Fresh Berries</a></li>
+                            <li><a href="#">Ocean Foods</a></li>
+                            <li><a href="#">Butter & Eggs</a></li>
+                            <li><a href="#">Fastfood</a></li>
+                            <li><a href="#">Fresh Onion</a></li>
+                            <li><a href="#">Papayaya & Crisps</a></li>
+                            <li><a href="#">Oatmeal</a></li>
+                            <li><a href="#">Fresh Bananas</a></li>
+                        </ul>
+                    </div> -->
+                </div>
+                <!-- <div class="col-lg-2">
+                    <div class="hero__search__form">
+                        <button type="submit" class="btn btn-outline-info btn-lg">Search by Image</button>
+                    </div>
+                </div> -->
+                <div class="col-lg-1"></div>
+                <div class="col-lg-7">
+                    <div class="hero__search">
+                        <div class="hero__search__form">
+                            <form action="#">
+                                <div class="hero__search__categories">
+                                    All Categories
+                                    <span class="arrow_carrot-down"></span>
+                                </div>
+                                <input type="text" placeholder="What do yo u need?">
+                                <button type="submit" class="site-btn">SEARCH</button>
+                            </form>
+                        </div>
+                        <!-- <div class="hero__search__phone">
+                            <div class="hero__search__phone__icon">
+                                <i class="fa fa-phone"></i>
+                            </div>
+                            <div class="hero__search__phone__text">
+                                <h5>+65 11.188.888</h5>
+                                <span>support 24/7 time</span>
+                            </div>
+                        </div> -->
+                    </div>
+                    <!-- <div class="hero__item set-bg" data-setbg="img/hero/banner.jpg">
+                        <div class="hero__text">
+                            <span>FRUIT FRESH</span>
+                            <h2>Vegetable <br />100% Organic</h2>
+                            <p>Free Pickup and Delivery Available</p>
+                            <a href="#" class="primary-btn">SHOP NOW</a>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
+    {% block content %}
+
+    {% endblock %}
+    <!-- The Modal Search by Ingredient -->
+    <div id="searchbyingredient" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4 class="col-12 modal-title text-center">Search by Ingredients</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Include these ingredients</label>
+                            <input type="text" id="form-tags-1" name="tags-1" class="form-control" required placeholder="Include ingredients">
+                        </div>
+                        <div class="form-group">
+                            <label>Do not include these ingredients</label>
+                            <input type="text" id="form-tags-2" name="tags-2" class="form-control" placeholder="Exclude ingredients">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="search-btn" value="Search">
+                        <!-- <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"> -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- The Modal Search by Ingredient -->
+
+    <!-- The Modal Search by Ingredient -->
+    <div id="searchbyimage" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4 class="col-12 modal-title text-center">Search by Image</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Link images</label>
+                            <input type="text" class="form-control" required placeholder="URL">
+                        </div>
+                        <div class="col-12 text-center"><strong>OR</strong></div>
+                        <div class="form-group">
+                            <label>Upload Image</label>
+                            <input type="file" name="img[]" class="file" accept="image/*">
+                            <div class="input-group my-3">
+                            <input type="text" class="form-control" disabled placeholder="Upload File" id="file">
+                            <div class="input-group-append">
+                                <button type="button" class="browse btn btn-primary">Browse...</button>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="ml-2 col-sm-6">
+                            <img src="https://placehold.it/80x80" id="preview" class="img-thumbnail">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="search-btn" value="Search">
+                        <!-- <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"> -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- The Modal Search by Ingredient -->
+
+    <!-- Footer Section Begin -->
+    <footer class="footer spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="footer__about">
+                        <div class="footer__about__logo">
+                            <a href="./index.html"><img src="img/logo.png" alt=""></a>
+                        </div>
+                        <ul>
+                            <li>Address: Hanoi University of Science and Technology</li>
+                            <li>Phone: +81 24 3623 1732                            </li>
+                            <li>Email: apply@hust.edu.vn</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
+                    <div class="footer__widget">
+                        <h6>Useful Links</h6>
+                        <ul>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">About Our Shop</a></li>
+                            <li><a href="#">Secure Shopping</a></li>
+                            <li><a href="#">Delivery infomation</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Our Sitemap</a></li>
+                        </ul>
+                        <ul>
+                            <li><a href="#">Who We Are</a></li>
+                            <li><a href="#">Our Services</a></li>
+                            <li><a href="#">Projects</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Innovation</a></li>
+                            <li><a href="#">Testimonials</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="footer__widget">
+                        <h6 class="text-center">Join our community Now</h6>
+                        <form action="#">
+                            <input type="submit" class="site-btn" value="Sign up">
+                        </form>
+                        <div class="footer__widget__social">
+                            <a href="#"><i class="fa fa-facebook"></i></a>
+                            <a href="#"><i class="fa fa-instagram"></i></a>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                            <a href="#"><i class="fa fa-pinterest"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+
+    <!-- Js Plugins -->
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/jquery.slicknav.js' %}"></script>
+    <script src="{% static 'js/mixitup.min.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/recipe.js' %}"></script>
+    {% block script %}
+
+    {% endblock %}
+
+
+</body>
+
+</html>
