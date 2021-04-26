@@ -1,25 +1,33 @@
-asgiref==3.3.4
-certifi==2020.12.5
-chardet==4.0.0
-click==7.1.2
-Django==3.2
-idna==2.10
-joblib==1.0.1
-nltk==3.6.2
-numpy==1.20.2
-pandas==1.2.4
-Pillow==8.2.0
-python-dateutil==2.8.1
-pytz==2021.1
-regex==2021.4.4
-six==1.15.0
-sqlparse==0.4.1
-tqdm==4.60.0
-urllib3==1.26.4
+asgiref>=3.3.4
+certifi>=2020.12.5
+chardet>=4.0.0
+click>=7.1.2
+Django>=3.2
+idna>=2.10
+joblib>=1.0.1
+nltk>=3.6.2
+numpy>=1.18.1
+opencv-python>=4.1.2.30
+requests>=2.25.0
+pandas>=1.1.2
+Pillow>=7.2.0
+python-dateutil>=2.8.1
+pytz>=2021.1
+regex>=2021.4.4
+six>=1.15.0
+sqlparse>=0.4.1
+tqdm>=4.60.0
+urllib3>=1.26.4
 djangorestframework >= "3.9.3"
 textblob
-requests
 beautifulsoup4 >= "4.7.1"
 lxml >= "4.3.2"
 python-decouple >= "3.1"
 python-memcached >= "1.59"
+torch>=1.6.0
+tqdm>=4.48.2
+torchvision>=0.4.1
+python-multipart
+h5py>=3.1.0
+pytz>=2020.1
+annoy
