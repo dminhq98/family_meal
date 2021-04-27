@@ -16,11 +16,20 @@ import torchvision.transforms as transforms
 from torchvision.datasets.folder import default_loader
 import search.models as models
 import h5py
+import pandas as pd
 
 date_format = "%Y-%m-%d"
 datetime_format = "%Y-%m-%d_%H-%M-%S"
 datetime_format_miliseconds = "%Y-%m-%d_%H:%M:%S.%f"
 vn_timezone = 'Asia/Ho_Chi_Minh'
+
+def load_csv_images(path_csv):
+    '''
+        Get image_path and product_id from a file CSV
+    '''
+    df = pd.read_csv(path_csv, header=None, names=['images', 'id'])
+    image_list, labels = list(df['images']), list(df['id'])
+    return image_list, labels
 
 def load_config_file(config_path):
     json_load = None

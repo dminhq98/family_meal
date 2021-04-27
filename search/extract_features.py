@@ -62,7 +62,7 @@ class FeatureExtraction:
             model_name, pretrained, weight, disable_gpu, cuda_id)
         self.image_mode = "pil"
 
-        self.transform = load_transform_augmen(
+        self.transform = load_transform(
             size=size, pre_crop=pre_crop, padding=padding)
 
     def extract_features_to_disk(self,
@@ -311,11 +311,7 @@ class FeatureExtraction:
         model = self.model.to(self.torch_device)
         image = self.transform(img).unsqueeze(0).to(self.torch_device)
         feature = model(image).data.cpu().numpy().reshape(1, -1)
-        if self.pca_path:
-            feature = self.pca.transform(feature)
         return feature.reshape(-1,)
-
-
 
 
 def get_all_features(

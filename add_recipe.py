@@ -5,25 +5,20 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'family_meal.settings')
 
 application = get_wsgi_application()
-from recipe.models import Recipe, Category, Ingredient, Direction, User, Review, Nutrition, MatchFood, ImageRecipe
+from recipe.models import Recipe, Category, Ingredient, Direction, User, Review, Nutrition, MatchFood, ImageRecipe, Favore
 from core.models import Food
 maxint = 1e7
 from core.ingredient import IngredientList
 from search.utils import get_list_images
 def add():
-    API_URL = "http://127.0.0.1:8000/signin"
-
-    data = {}
-    data['name'] = 'Duong Minh Quang'
-    data['username'] = 'dminhq'
-    data['password1'] = '123456'
-    data['password2'] = '123456'
-    data['address'] = 'HUST'
-    # data['birthday'] = '18-04-1998'
-    data = json.dumps(data)
-    print(data)
-    response = requests.post(API_URL, data=data)
-    print(response.status_code)
+    user = User()
+    user.username = 'dminhq98'
+    user.name = 'Duong Minh Quang'
+    user.address = 'HUST'
+    user.birthday = '1998-05-13 00:00:00'
+    user.set_password('123456')
+    user.level = 2
+    user.save()
 
 # add()
 
@@ -105,7 +100,8 @@ import random
 from django.db.models import Avg
 def add_coment():
     for i in range(50):
-        idx = random.randint(0, 100)
+        idx = random.randint(1, 50)
+        print(idx)
         rev = Review()
         rec = Recipe.objects.get(id=idx)
         rev.recipe = rec
@@ -116,18 +112,20 @@ def add_coment():
         rec.rate = round(rec.recipe_review.all().aggregate(Avg('rate'))['rate__avg'], 1)
         rec.save()
 
-add_coment()
+# add_coment()
 
-def make_csv():
-    with open("recipe_final.json", 'r') as f:
-        data = json.load(f)
-    for idx, dt in enumerate(data):
-        # print(dt['name'])
-        rec  = Recipe.objects.get(name=dt['name'])
-        print(rec)
+def add_favore():
+    for i in range(5):
+        idx = random.randint(1, 50)
+        fav = Favore()
+        rec = Recipe.objects.get(id=idx)
+        fav.recipe = rec
+        fav.user = User.objects.get(id=1)
+        fav.save()
+add_favore()
 # make_csv()
-rec = Recipe.objects.get(id=1)
-print(rec.ingredient)
+# rec = Recipe.objects.get(id=1)
+# print(rec.ingredient)
 # print(rec.images.url)
 
 # user = User.objects.get(id=1)

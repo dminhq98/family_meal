@@ -14,9 +14,10 @@ Shopping List
                         <div class="sidebar__item">
                             <h4>Department</h4>
                             <ul>
-                                <li><a href="#">Add recipe</a></li>
-                                <li><a href="#">Shared recipes</a></li>
-                                <li><a href="#">Favorite recipes</a></li>
+                                <li><a href="/add">Add recipe</a></li>
+                                <li><a href="/share_recipe">Shared recipes</a></li>
+                                <li><a href="/favore_recipe">Favorite recipes</a></li>
+                                <li><a href="/shop_list">Shopping List</a></li>
                             </ul>
                         </div>
                     </div>
@@ -29,52 +30,31 @@ Shopping List
                         <table>
                             <thead>
                                 <tr>
-                                    <th class="shoping__product">Recipe</th>
+                                    <th class="shoping__product">Ingredients</th>
                                     <!-- <th>Date</th> -->
                                     <th></th>
-                                    <th></th>
+                                    <th>
+                                        <form action="/shop_list" method='POST'>
+                                        {% csrf_token %}
+                                        <button class="btn btn-success">Clear all</button>
+                                        </form>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for ing in ingredients %}
                                 <tr>
                                     <td class="shoping__cart__item">
-                                        <img src="img/cart/cart-1.jpg" alt="">
-                                        <h5>Vegetable’s Package</h5>
+                                        <h5>{{ing.ingredient.content}}</h5>
                                     </td>
-                                    <td class="shoping__cart__quantity">
-                                        <button class="btn btn-warning" data-toggle="modal" data-target="#editBookModal">Edit</button>
-                                    </td>
-                                    <td class="shoping__cart__total">
-                                        <button class="btn btn-danger" data-toggle="modal"
-                                            data-target="#deleteBookModal">Delete</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="shoping__cart__item">
-                                        <img src="img/cart/cart-1.jpg" alt="">
-                                        <h5>Vegetable’s Package</h5>
-                                    </td>
-                                    <td class="shoping__cart__quantity">
-                                        <button class="btn btn-warning" data-toggle="modal" data-target="#editBookModal">Edit</button>
+                                    <td>
+                                        <span>{{ing.ingredient.create_at|date:"d-m-Y"}}</span>
                                     </td>
                                     <td class="shoping__cart__total">
-                                        <button class="btn btn-danger" data-toggle="modal"
-                                            data-target="#deleteBookModal">Delete</button>
+                                        <a class="btn btn-danger" href="/clear_shoplist/{{ing.id}}">Clear</a>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="shoping__cart__item">
-                                        <img src="img/cart/cart-1.jpg" alt="">
-                                        <h5>Vegetable’s Package</h5>
-                                    </td>
-                                    <td class="shoping__cart__quantity">
-                                        <button class="btn btn-warning" data-toggle="modal" data-target="#editBookModal">Edit</button>
-                                    </td>
-                                    <td class="shoping__cart__total">
-                                        <button class="btn btn-danger" data-toggle="modal"
-                                            data-target="#deleteBookModal">Delete</button>
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>

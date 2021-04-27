@@ -6,7 +6,8 @@ import os
 import sys
 import search.indexs as indexs
 from search import FeatureExtraction
-from search.utils import vntime_now, datetime_format, str2size, get_list_images, set_logging
+from search.utils import vntime_now, datetime_format, str2size, get_list_images, set_logging, load_csv_images
+
 sys.path.append(".")
 PATH_LOG = "extracter.log"
 def extract_data(
@@ -24,9 +25,7 @@ def extract_data(
         global_search,
         n_trees,):
 
-    base_data = path_data
-    if base_data[-1] != '/':
-        base_data = base_data + '/'
+    base_data = ''
     disable_gpu = True if cuda_id == -1 else False
     pretrained = False if weight else True
     extracter = FeatureExtraction(
@@ -38,7 +37,7 @@ def extract_data(
         padding=padding,
         disable_gpu=disable_gpu,
         cuda_id=cuda_id)
-    img_list, _ = get_list_images(base_data)
+    img_list, _ = load_csv_images(path_data)
     print("num valid path", len(img_list))
     extract_logger = set_logging(path_log)
     # extract_logger.info(args)
@@ -74,9 +73,9 @@ def main():
         '--path_data',
         type=str,
         required=True,
-        default='data/images/',
-        help='path to the directory in which to extract \
-                the data has a form path/to/.Eg: data/images/')
+        default='data/images.csv',
+        help='path to csv file which to extract \
+                the data')
     parser.add_argument(
         '--path_save',
         type=str,

@@ -66,7 +66,7 @@ Recipe detail
                         <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Prep: <span>{{recipe.prep}}</span></div>
                         <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Cook: <span>{{recipe.cook}}</span></div>
                         <div class="checkout__order__products"><i class="fa fa-user-o"></i> Servings: <span>{{recipe.servings}}</span></div>
-                        <button  type="submit" class="btn btn-outline-secondary">Nutrition Info</button>
+                        <button  type="submit" class="btn btn-outline-secondary" id="calculate-button" onclick="showNutrition()" data-toggle="modal" data-target="#result-modal">Nutrition Info</button>
                     </div>
                 </div>
                 <div class="col-lg-12">
@@ -87,19 +87,22 @@ Recipe detail
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6">
                                             <h6 class="font-weight-bold">INGREDIENTS</h6>
-                                            <ul class="list-group list-group-flush">
-                                                {% for ing in recipe.ingredient.all %}
-                                                <li class="list-group-item">
-                                                <!-- Default checked -->
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="check{{ing.id}}">
-                                                    <label class="custom-control-label" for="check{{ing.id}}">{{ing.content}}</label>
-                                                </div>
-                                                </li>
-                                                {% endfor %}
-                                            </ul>
-                                            <br>
-                                            <button  type="submit" class="btn btn-outline-secondary">Add to shopping list</button>
+                                            <form action="/add_shoplist/{{recipe.id}}" method='POST'>
+                                                {% csrf_token %}
+                                                <ul class="list-group list-group-flush">
+                                                    {% for ing in recipe.ingredient.all %}
+                                                    <li class="list-group-item">
+                                                    <!-- Default checked -->
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="check{{forloop.counter}}" name="{{ing.id}}" value="{{ing.id}}">
+                                                        <label class="custom-control-label" for="check{{forloop.counter}}">{{ing.content}}</label>
+                                                    </div>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                <br>
+                                                <button  type="submit" class="btn btn-outline-secondary">Add to shopping list</button>
+                                                </form>
                                         </div>
                                         <div class="col-lg-6 col-md-6">
                                             <h6 class="font-weight-bold">DIRECTIONS</h6>
@@ -317,6 +320,33 @@ Recipe detail
     </section>
     <!-- Recipe Details Section End -->
 
+<div class="modal" id="result-modal" style="display:none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Nutrion</div>
+                <button type="button" id="modal-close" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="nutrition-chart" style="width: 100%; min-height: 300px"></div>
+                <div id="nutrition-table" class="siimple-table siimple-table--border">
+                    <div class="siimple-table-header">
+                        <div class="siimple-table-row">
+                            <div class="siimple-table-cell">Nutrient</div>
+                            <div class="siimple-table-cell">Summary</div>
+                            <div class="siimple-table-cell">Serving</div>
+                        </div>
+                    </div>
+                    <div class="siimple-table-body" id="nutrition-table-body">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                Note that presented values are approximate and shouldn't be considered as real.
+            </div>
+        </div>
+    </div>
+</div>
     <!-- The Modal Search by Ingredient -->
     <div id="addreview" class="modal fade">
             <div class="modal-content">
@@ -423,5 +453,121 @@ Recipe detail
 {% endblock %}
 
 {% block script %}
-
+<script>
+    var namesForNutrients = units = {
+        "ENERGY": "Energy",
+        "FAT": "Fat",
+        "PROTEIN": "Protein",
+        "CARB": "Carbs",
+        "FAT_SAT": "Sat Fat",
+        "FAT_POLY": "Polyunsat Fat",
+        "FAT_MONO": "Monounsat Fat",
+        "SUGAR": "Sugar",
+        "CHOLE": "Chole",
+        "SODIUM": "Sodium",
+        "POTAS": "Potas",
+        "FIBER": "Fiber",
+    }
+    var chart = null;
+    function createChart(data) {
+        chart = echarts.init(document.getElementById("nutrition-chart"))
+        option = {
+            title: {
+                text: `Total energy: ${data.nutrition.ENERGY[0]} kcal`,
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c}g ({d}%)"
+            },
+            legend: {
+                bottom: 40,
+                left: 'center',
+                data: ['Fat', 'Protein', 'Carbs']
+            },
+            series: [
+                {
+                    name: 'Nutrition',
+                    type: 'pie',
+                    radius: '55%',
+                    center: ['50%', '45%'],
+                    data: [
+                        { value: data.nutrition.FAT[0], name: 'Fat', itemStyle: { color: '#FDE74C' } },
+                        { value: data.nutrition.PROTEIN[0], name: 'Protein', itemStyle: { color: '#5BC0EB' } },
+                        { value: data.nutrition.CARB[0], name: 'Carbs', itemStyle: { color: '#9BC53D' } },
+                    ],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        chart.setOption(option, true);
+    }
+    function dropChart() {
+        chart.clear()
+    }
+    function postData() {
+        var json = JSON.parse({{nutrion_data}});
+        // Show modal before creating chart
+        document.getElementById("result-modal").style.display = "";
+        createChart(json);
+        fillNutritionTable(json);
+    }
+    function fillNutritionTable(data) {
+        data = Object.entries(data.nutrition);
+        var table = document.getElementById("nutrition-table-body");
+        for (var i = 0; i < data.length; i++) {
+            // Prepare data
+            var name = namesForNutrients[data[i][0]];
+            var unit = data[i][1][2];
+            var summary = `${data[i][1][0]} ${unit}`;
+            var serving = `${data[i][1][1]} ${unit}`;
+            // Create a row
+            var row = document.createElement("div");
+            row.className = "siimple-table-row"
+            // Fill in row
+            var name_div = document.createElement("div");
+            name_div.className = "siimple-table-cell";
+            name_div.innerHTML = name;
+            var summary_div = document.createElement("div");
+            summary_div.className = "siimple-table-cell";
+            summary_div.innerHTML = summary;
+            var serving_div = document.createElement("div");
+            serving_div.className = "siimple-table-cell";
+            serving_div.innerHTML = serving;
+            row.appendChild(name_div);
+            row.appendChild(summary_div);
+            row.appendChild(serving_div);
+            // Add row to table
+            table.appendChild(row);
+        }
+    }
+    function clearNutritionTable() {
+        var table = document.getElementById("nutrition-table-body");
+        table.innerHTML = '';
+    }
+    function showNutrition() {
+         var json = JSON.parse({{nutrion_data}});
+        // Show modal before creating chart
+        createChart(json);
+        fillNutritionTable(json);
+    }
+<!--    document.getElementById("calculate-button").addEventListener("click", function () {-->
+<!--        var json = JSON.parse({{nutrion_data}});-->
+<!--        // Show modal before creating chart-->
+<!--        document.getElementById("result-modal").style.display = "";-->
+<!--        createChart(nutrion_data);-->
+<!--        fillNutritionTable(nutrion_data);-->
+<!--    });-->
+    document.getElementById("modal-close").addEventListener("click", function () {
+        document.getElementById("result-modal").style.display = "none";
+        dropChart();
+        clearNutritionTable();
+    });
+</script>
 {% endblock %}

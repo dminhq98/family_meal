@@ -1,5 +1,5 @@
 {
   "weight": "data/model_best.pth",
-  "feature": "2021-04-06_22-08-30_instances.h5",
-  "index": "2021-04-06_22-08-30_instances.ann"
+  "feature": "data/2021-04-27_14-16-41_global.h5",
+  "index": "data/2021-04-27_14-16-41_global.ann"
 }
