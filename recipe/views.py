@@ -35,7 +35,16 @@ class HomePageView(View):
       review_recipes = Review.objects.order_by().values_list('recipe', flat=True).distinct()[:6]
       review_recipe1 = [Recipe.objects.get(id=i) for i in review_recipes[:3]]
       review_recipe2 = [Recipe.objects.get(id=i) for i in review_recipes[3:6]]
-      category = Category.objects.filter(name__in=['Vegetable', 'Snacks', 'Healthy','Seafood'])[:12]
+      category = []
+      cate = Category.objects.filter(name='Vegetable')[:4]
+      category.extend(list(cate))
+      cate = Category.objects.filter(name='Snacks')[:4]
+      category.extend(list(cate))
+      cate = Category.objects.filter(name='Healthy')[:4]
+      category.extend(list(cate))
+      cate = Category.objects.filter(name='Seafood')[:4]
+      category.extend(list(cate))
+      category = set(category)
       data = {'new_recipe1':new_recipe1, 'new_recipe2':new_recipe2, 'fastest_recipe1':fastest_recipe1\
               , 'fastest_recipe2':fastest_recipe2, 'top_rate1':top_rate1, 'top_rate2':top_rate2,'review_recipe1':review_recipe1\
               ,'review_recipe2':review_recipe2, 'category':category}
@@ -118,6 +127,7 @@ class SearchImageRecipeView(View):
          recipes = []
          for i in res:
             try:
+               i = 'images/' + i
                img_rec = ImageRecipe.objects.get(images=i)
                if img_rec.recipe not in recipes:
                   recipes.append(img_rec.recipe)
@@ -135,6 +145,7 @@ class SearchImageRecipeView(View):
             recipes = []
             for i in res:
                try:
+                  i = 'images/'+i
                   img_rec = ImageRecipe.objects.get(images=i)
                   if img_rec.recipe not in recipes:
                      recipes.append(img_rec.recipe)
@@ -150,28 +161,14 @@ class SearchImageRecipeView(View):
 class SearchIngredientRecipeView(View):
    template_name = "pages/search_ingredient.html"
 
-   def get(self, request):
-      return render(request, 'pages/search_ingredient.html',
-                    {'recipes': [], 'include_ingredients': [], \
-                     'exclude_ingredients': []})
-
    def post(self, request):
 
       include_ingredients = request.POST['include_ingredients']
       exclude_ingredients = request.POST['exclude_ingredients']
       include_ingredients = include_ingredients.split(',')
       exclude_ingredients = exclude_ingredients.split(',')
-      rec = search_ingredient.search_topk(include_ingredients, exclude_ingredients, k=50)
+      rec = search_ingredient.search_topk(include_ingredients, exclude_ingredients, k=12)
 
-      paginator = Paginator(rec, 9)
-
-      pageNumber = request.GET.get('page')
-      try:
-         rec = paginator.page(pageNumber)
-      except PageNotAnInteger:
-         rec = paginator.page(1)
-      except EmptyPage:
-         rec = paginator.page(paginator.num_pages)
       return render(request, 'pages/search_ingredient.html', {'recipes': rec, 'include_ingredients':include_ingredients,\
                   'exclude_ingredients':exclude_ingredients})
 
@@ -182,7 +179,7 @@ class SearchKeywordRecipeView(TemplateView):
 
       key_word = request.POST['key_word']
 
-      rec = Recipe.objects.filter(Q(name__contains=key_word) | Q(description__contains=key_word))
+      rec = Recipe.objects.filter(Q(name__contains=key_word) | Q(description__contains=key_word))[:12]
 
       return render(request, 'pages/search_keyword.html',{'recipes': rec, 'key_word': key_word})
 

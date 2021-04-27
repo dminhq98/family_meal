@@ -4,130 +4,7 @@
 Search Ingredient
 {% endblock %}
 
-{% block content %}<script>
-    var namesForNutrients = units = {
-        "ENERGY": "Energy",
-        "FAT": "Fat",
-        "PROTEIN": "Protein",
-        "CARB": "Carbs",
-        "FAT_SAT": "Sat Fat",
-        "FAT_POLY": "Polyunsat Fat",
-        "FAT_MONO": "Monounsat Fat",
-        "SUGAR": "Sugar",
-        "CHOLE": "Chole",
-        "SODIUM": "Sodium",
-        "POTAS": "Potas",
-        "FIBER": "Fiber",
-    }
-    var chart = null;
-    function createChart(data) {
-        chart = echarts.init(document.getElementById("nutrition-chart"))
-        option = {
-            title: {
-                text: `Total energy: ${data.nutrition.ENERGY[0]} kcal`,
-                x: 'center'
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c}g ({d}%)"
-            },
-            legend: {
-                bottom: 40,
-                left: 'center',
-                data: ['Fat', 'Protein', 'Carbs']
-            },
-            series: [
-                {
-                    name: 'Nutrition',
-                    type: 'pie',
-                    radius: '55%',
-                    center: ['50%', '45%'],
-                    data: [
-                        { value: data.nutrition.FAT[0], name: 'Fat', itemStyle: { color: '#FDE74C' } },
-                        { value: data.nutrition.PROTEIN[0], name: 'Protein', itemStyle: { color: '#5BC0EB' } },
-                        { value: data.nutrition.CARB[0], name: 'Carbs', itemStyle: { color: '#9BC53D' } },
-                    ],
-                    itemStyle: {
-                        emphasis: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-            ]
-        };
-        chart.setOption(option, true);
-    }
-    function dropChart() {
-        chart.clear()
-    }
-    function postData() {
-        var xhr = new XMLHttpRequest();
-        var url = "{% url 'calculate-from-text' %}";
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                var json = JSON.parse(xhr.responseText);
-                // Show modal before creating chart
-                document.getElementById("result-modal").style.display = "";
-                createChart(json);
-                fillNutritionTable(json);
-            }
-        };
-        var ings = document.getElementById("ingredients-value").value.split("\n");
-        var servings = parseInt(document.getElementById("servings-value").value);
-        var data = JSON.stringify({ "ingredients": ings, "servings": servings });
-        xhr.send(data);
-    }
-    function fillNutritionTable(data) {
-        data = Object.entries(data.nutrition);
-        var table = document.getElementById("nutrition-table-body");
-        for (var i = 0; i < data.length; i++) {
-            // Prepare data
-            var name = namesForNutrients[data[i][0]];
-            var unit = data[i][1][2];
-            var summary = `${data[i][1][0]} ${unit}`;
-            var serving = `${data[i][1][1]} ${unit}`;
-            // Create a row
-            var row = document.createElement("div");
-            row.className = "siimple-table-row"
-            // Fill in row
-            var name_div = document.createElement("div");
-            name_div.className = "siimple-table-cell";
-            name_div.innerHTML = name;
-            var summary_div = document.createElement("div");
-            summary_div.className = "siimple-table-cell";
-            summary_div.innerHTML = summary;
-            var serving_div = document.createElement("div");
-            serving_div.className = "siimple-table-cell";
-            serving_div.innerHTML = serving;
-            row.appendChild(name_div);
-            row.appendChild(summary_div);
-            row.appendChild(serving_div);
-            // Add row to table
-            table.appendChild(row);
-        }
-    }
-    function clearNutritionTable() {
-        var table = document.getElementById("nutrition-table-body");
-        table.innerHTML = '';
-    }
-    document.getElementById("calculate-button").addEventListener("click", function () {
-        input = document.getElementById("ingredients-value").value.trim();
-        if (!input) {
-            alert("Add some ingredients first");
-        } else {
-            postData();
-        }
-    });
-    document.getElementById("modal-close").addEventListener("click", function () {
-        document.getElementById("result-modal").style.display = "none";
-        dropChart();
-        clearNutritionTable();
-    });
-</script>
+{% block content %}
 <!-- Product Section Begin -->
     <section class="product spad">
         <div class="container">
@@ -147,6 +24,9 @@ Search Ingredient
                     <div class="section-title product__discount__title">
                         <h2>Results</h2>
                     </div>
+                    <div class="section-title product__discount__title">
+                        <p><strong>Key words: </strong>{{key_word}}</p>
+                    </div>
                     <div class="row">
                         {% for rec in recipes %}
                             <div class="col-lg-4 col-md-4 col-sm-6">
@@ -165,14 +45,6 @@ Search Ingredient
                                 </div>
                             </div>
                         {% endfor %}
-                        <div class="col-lg-12">
-                            <div class="product__pagination blog__pagination">
-                                <a href="#">1</a>
-                                <a href="#">2</a>
-                                <a href="#">3</a>
-                                <a href="#"><i class="fa fa-long-arrow-right"></i></a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

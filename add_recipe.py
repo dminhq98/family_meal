@@ -64,7 +64,7 @@ def add_recipe():
         for i in path_imgs:
             img = ImageRecipe()
             img.recipe = rec
-            img.images = i
+            img.images = i.replace('images/','')
             img.save()
 
         categorys = dt['category']
@@ -94,7 +94,7 @@ def add_recipe():
             dire.recipe = rec
             dire.content = i
             dire.save()
-        if idx == 100: break
+        # if idx == 100: break
 # add_recipe()
 import random
 from django.db.models import Avg
@@ -112,7 +112,7 @@ def add_coment():
         rec.rate = round(rec.recipe_review.all().aggregate(Avg('rate'))['rate__avg'], 1)
         rec.save()
 
-# add_coment()
+add_coment()
 
 def add_favore():
     for i in range(5):

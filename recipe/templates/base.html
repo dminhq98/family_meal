@@ -33,7 +33,7 @@
             <div class="row">
                 <div class="col-lg-3">
                     <div class="header__logo">
-                        <a href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt=""></a>
+                        <a href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt="Family meal"></a>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -88,7 +88,7 @@
                                     All Categories
                                     <span class="arrow_carrot-down"></span>
                                 </div>
-                                <input type="text" name="key_word" placeholder="What do you need?">
+                                <input type="text" name="key_word" required placeholder="What do you need?">
                                 <button type="submit" class="site-btn">SEARCH</button>
                             </form>
                         </div>
@@ -152,36 +152,48 @@
     <div id="searchbyimage" class="modal fade">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form>
                     <div class="modal-header">
                         <h4 class="col-12 modal-title text-center">Search by Image</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label>Link images</label>
-                            <input type="text" class="form-control" required placeholder="URL">
+                        <div class="row">
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-10">
+                            <div class="form-group ">
+                                <div class="hero__search__form">
+                                <form action="/search_image" method='POST'>
+                                    {% csrf_token %}
+                                    <input type="text" name="search-url" required placeholder="URL">
+                                    <button type="submit" class="site-btn">SEARCH</button>
+                                </form>
+                                </div>
+                            </div>
+                            </div>
                         </div>
+                        <hr>
                         <div class="col-12 text-center"><strong>OR</strong></div>
-                        <div class="form-group">
-                            <label>Upload Image</label>
-                            <input type="file" name="img[]" class="file" accept="image/*">
-                            <div class="input-group my-3">
-                            <input type="text" class="form-control" disabled placeholder="Upload File" id="file">
-                            <div class="input-group-append">
-                                <button type="button" class="browse btn btn-primary">Browse...</button>
+                        <hr>
+                        <form action="/search_image" method='POST' enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+<!--                                    <label>Upload Image</label>-->
+                                <input type="file" name="search-file" class="file" accept="image/*">
+                                <div class="input-group my-3">
+                                <input type="text" class="form-control" disabled placeholder="Upload File" id="file">
+                                <div class="input-group-append">
+                                    <button type="button" class="browse btn btn-primary">Browse...</button>
+                                </div>
+                                <div>&nbsp<input type="submit" class="search-btn" value="SEARCH"></div>
+                                </div>
+                                <div class="ml-2 col-sm-6">
+                                    <img src="https://placehold.it/80x80" id="preview" class="img-thumbnail">
+                                </div>
                             </div>
-                            </div>
-                        </div>
-                        <div class="ml-2 col-sm-6">
-                            <img src="https://placehold.it/80x80" id="preview" class="img-thumbnail">
-                        </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" class="search-btn" value="Search">
-                        <!-- <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"> -->
                     </div>
-                </form>
             </div>
         </div>
     </div>
