@@ -37,13 +37,12 @@ class Recipe(models.Model):
     def __str__(self):  # pragma: no cover
         return f"#{self.id} {self.name}"
 
-
 class Review(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_review')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_review')
     content = models.TextField()
-    images = models.ImageField(null=True, upload_to='reviews')
+    images = models.ImageField(null=True, upload_to='images')
     rate = models.IntegerField()
     create_at = models.DateTimeField(auto_now_add=True)
 
@@ -51,6 +50,14 @@ class Review(models.Model):
         ordering = ('-create_at',)
     def __str__(self):  # pragma: no cover
         return f"#{self.id} {self.content}"
+
+class ImageRecipe(models.Model):
+
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='image')
+    images = models.ImageField(null=True, upload_to='images')
+
+    def __str__(self):  # pragma: no cover
+        return f"#{self.id} {self.images}"
 
 class Category(models.Model):
 

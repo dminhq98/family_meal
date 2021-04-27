@@ -10,28 +10,46 @@ Recipe detail
         <div class="container">
             <div class="row">
                 <div class="product__details__text">
-                    <h2>Vetgetable’s Package</h2>
+                    <h2>{{recipe.name}}</h2>
                     <div class="row">
-                        <div class="col-lg-2 col-md-4">
+                        <div class="col-lg-3 col-md-4">
                             <div class="product__details__rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star-half-o"></i>
-                                <span>(18 reviews)</span>
+                                {% if recipe.rate >= 1 %}
+                                    <i class="fa fa-star"></i>
+                                {% else %}
+                                     <i class="fa fa-star-o"></i>
+                                {% endif %}
+                                {% if recipe.rate >= 2 %}
+                                    <i class="fa fa-star"></i>
+                                {% else %}
+                                     <i class="fa fa-star-o"></i>
+                                {% endif %}
+                                {% if recipe.rate >= 3 %}
+                                    <i class="fa fa-star"></i>
+                                {% else %}
+                                     <i class="fa fa-star-o"></i>
+                                {% endif %}
+                                {% if recipe.rate >= 4 %}
+                                    <i class="fa fa-star"></i>
+                                {% else %}
+                                     <i class="fa fa-star-o"></i>
+                                {% endif %}
+                                {% if recipe.rate >= 5 %}
+                                    <i class="fa fa-star"></i>
+                                {% else %}
+                                     <i class="fa fa-star-o"></i>
+                                {% endif %}
+                                <span>({{recipe.recipe_review.count}} reviews)</span>
                             </div>
                         </div>
                         <div class="col-lg-2 col-md-4">
-                            <span><i class="fa fa-calendar-o"></i> May 4,2019</span>
+                            <span><i class="fa fa-calendar-o"></i> {{recipe.create_at|date:"d-m-Y"}}</span>
                         </div>
                         <div class="col-lg-2 col-md-4">
-                            <span><i class="fa fa-address-book" aria-hidden="true"></i> by <a href="#">admin</a></span>
+                            <span><i class="fa fa-address-book" aria-hidden="true"></i> by <a href="#"> {{recipe.user.username}}</a></span>
                         </div>
                     </div>
-                    <p>Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Vestibulum ac diam sit amet quam
-                        vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet
-                        quam vehicula elementum sed sit amet dui. Proin eget tortor risus.</p>
+                    <p> {{recipe.description}}</p>
                 </div>
             </div>
             <div class="row">
@@ -39,25 +57,15 @@ Recipe detail
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <img class="product__details__pic__item--large"
-                                src="img/product/details/product-details-1.jpg" alt="">
+                                src="{{recipe.images.url}}" alt="">
                         </div>
-                        <!-- <div class="product__details__pic__slider owl-carousel">
-                            <img data-imgbigurl="img/product/details/product-details-2.jpg"
-                                src="img/product/details/thumb-1.jpg" alt="">
-                            <img data-imgbigurl="img/product/details/product-details-3.jpg"
-                                src="img/product/details/thumb-2.jpg" alt="">
-                            <img data-imgbigurl="img/product/details/product-details-5.jpg"
-                                src="img/product/details/thumb-3.jpg" alt="">
-                            <img data-imgbigurl="img/product/details/product-details-4.jpg"
-                                src="img/product/details/thumb-4.jpg" alt="">
-                        </div> -->
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-4">
                     <div class="checkout__order">
-                        <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Prep: <span>15 mins</span></div>
-                        <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Cook: <span>45 mins</span></div>
-                        <div class="checkout__order__products"><i class="fa fa-user-o"></i> Servings: <span>8</span></div>
+                        <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Prep: <span>{{recipe.prep}}</span></div>
+                        <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Cook: <span>{{recipe.cook}}</span></div>
+                        <div class="checkout__order__products"><i class="fa fa-user-o"></i> Servings: <span>{{recipe.servings}}</span></div>
                         <button  type="submit" class="btn btn-outline-secondary">Nutrition Info</button>
                     </div>
                 </div>
@@ -80,41 +88,15 @@ Recipe detail
                                         <div class="col-lg-6 col-md-6">
                                             <h6 class="font-weight-bold">INGREDIENTS</h6>
                                             <ul class="list-group list-group-flush">
+                                                {% for ing in recipe.ingredient.all %}
                                                 <li class="list-group-item">
                                                 <!-- Default checked -->
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="check1">
-                                                    <label class="custom-control-label" for="check1">Check me</label>
+                                                    <input type="checkbox" class="custom-control-input" id="check{{ing.id}}">
+                                                    <label class="custom-control-label" for="check{{ing.id}}">{{ing.content}}</label>
                                                 </div>
                                                 </li>
-                                                <li class="list-group-item">
-                                                <!-- Default checked -->
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="check2">
-                                                    <label class="custom-control-label" for="check2">Check me</label>
-                                                </div>
-                                                </li>
-                                                <li class="list-group-item">
-                                                <!-- Default checked -->
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="check3">
-                                                    <label class="custom-control-label" for="check3">Check me</label>
-                                                </div>
-                                                </li>
-                                                <li class="list-group-item">
-                                                <!-- Default checked -->
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="check4">
-                                                    <label class="custom-control-label" for="check4">Check me</label>
-                                                </div>
-                                                </li>
-                                                <li class="list-group-item">
-                                                <!-- Default checked -->
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="check5">
-                                                    <label class="custom-control-label" for="check5">Check me</label>
-                                                </div>
-                                                </li>
+                                                {% endfor %}
                                             </ul>
                                             <br>
                                             <button  type="submit" class="btn btn-outline-secondary">Add to shopping list</button>
@@ -122,9 +104,9 @@ Recipe detail
                                         <div class="col-lg-6 col-md-6">
                                             <h6 class="font-weight-bold">DIRECTIONS</h6>
                                             <ol class="list-group">
-                                                <li class="list-group-item list-group-item-action"><strong>Step 1:</strong> - no special actions required, all sites you make with Mobirise are mobile-friendly. You don't have to create a special mobile version of your site, it will adapt automagically. <a href="https://mobirise.com/">Try it now!</a></li>
-                                                <li class="list-group-item list-group-item-action"><strong>Step 2:</strong> - cut down the development time with drag-and-drop website builder. Drop the blocks into the page, edit content inline and publish - no technical skills required. <a href="https://mobirise.com/">Try it now!</a></li>
-                                                <li class="list-group-item list-group-item-action"><strong>Step 3:</strong> - choose from the large selection of latest pre-made blocks - full-screen intro, bootstrap carousel, content slider, responsive image gallery with lightbox, parallax scrolling, video backgrounds, hamburger menu, sticky header and more. <a href="https://mobirise.com/">Try it now!</a></li>
+                                                {% for dir in recipe.direction.all %}
+                                                <li class="list-group-item list-group-item-action"><strong>Step {{forloop.counter}}:</strong> {{dir.content}}</li>
+                                                {% endfor %}
                                             </ol>
                                         </div>
                                     </div>
@@ -141,183 +123,188 @@ Recipe detail
                                     <div class="col-sm-3">
                                         <div class="rating-block">
                                             <h4>Average user rating</h4>
-                                            <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
-                                            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                                              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                                              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-                                              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                                              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
-                                              <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                            </button>
+                                            <h2 class="bold padding-bottom-7">{{recipe.rate}} <small>/ 5</small></h2>
+                                            {% if recipe.rate >= 1 %}
+                                                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% endif %}
+                                            {% if recipe.rate >= 2 %}
+                                                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% endif %}
+                                            {% if recipe.rate >= 3 %}
+                                                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% endif %}
+                                            {% if recipe.rate >= 4 %}
+                                                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% endif %}
+                                            {% if recipe.rate >= 5 %}
+                                                <button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-default btn-grey btn-sm" aria-label="Left Align">
+                                                   <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                                </button>
+                                            {% endif %}
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <h4>Rating breakdown</h4>
-                                        <div class="pull-left">
-                                            <div class="pull-left" style="width:35px; line-height:1;">
-                                                <div style="height:9px; margin:5px 0;">5 <span class="glyphicon glyphicon-star"></span></div>
-                                            </div>
-                                            <div class="pull-left" style="width:180px;">
-                                                <div class="progress" style="height:9px; margin:8px 0;">
-                                                  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5" style="width: 1000%">
-                                                    <span class="sr-only">80% Complete (danger)</span>
-                                                  </div>
-                                                </div>
-                                            </div>
-                                            <div class="pull-right" style="margin-left:10px;">1</div>
-                                        </div>
-                                        <div class="pull-left">
-                                            <div class="pull-left" style="width:35px; line-height:1;">
-                                                <div style="height:9px; margin:5px 0;">4 <span class="glyphicon glyphicon-star"></span></div>
-                                            </div>
-                                            <div class="pull-left" style="width:180px;">
-                                                <div class="progress" style="height:9px; margin:8px 0;">
-                                                  <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: 80%">
-                                                    <span class="sr-only">80% Complete (danger)</span>
-                                                  </div>
-                                                </div>
-                                            </div>
-                                            <div class="pull-right" style="margin-left:10px;">1</div>
-                                        </div>
-                                        <div class="pull-left">
-                                            <div class="pull-left" style="width:35px; line-height:1;">
-                                                <div style="height:9px; margin:5px 0;">3 <span class="glyphicon glyphicon-star"></span></div>
-                                            </div>
-                                            <div class="pull-left" style="width:180px;">
-                                                <div class="progress" style="height:9px; margin:8px 0;">
-                                                  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5" style="width: 60%">
-                                                    <span class="sr-only">80% Complete (danger)</span>
-                                                  </div>
-                                                </div>
-                                            </div>
-                                            <div class="pull-right" style="margin-left:10px;">0</div>
-                                        </div>
-                                        <div class="pull-left">
-                                            <div class="pull-left" style="width:35px; line-height:1;">
-                                                <div style="height:9px; margin:5px 0;">2 <span class="glyphicon glyphicon-star"></span></div>
-                                            </div>
-                                            <div class="pull-left" style="width:180px;">
-                                                <div class="progress" style="height:9px; margin:8px 0;">
-                                                  <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" style="width: 40%">
-                                                    <span class="sr-only">80% Complete (danger)</span>
-                                                  </div>
-                                                </div>
-                                            </div>
-                                            <div class="pull-right" style="margin-left:10px;">0</div>
-                                        </div>
-                                        <div class="pull-left">
-                                            <div class="pull-left" style="width:35px; line-height:1;">
-                                                <div style="height:9px; margin:5px 0;">1 <span class="glyphicon glyphicon-star"></span></div>
-                                            </div>
-                                            <div class="pull-left" style="width:180px;">
-                                                <div class="progress" style="height:9px; margin:8px 0;">
-                                                  <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" style="width: 20%">
-                                                    <span class="sr-only">80% Complete (danger)</span>
-                                                  </div>
-                                                </div>
-                                            </div>
-                                            <div class="pull-right" style="margin-left:10px;">0</div>
-                                        </div>
-                                    </div>
+<!--                                    <div class="col-sm-3">-->
+<!--                                        <h4>Rating breakdown</h4>-->
+<!--                                        <div class="pull-left">-->
+<!--                                            <div class="pull-left" style="width:35px; line-height:1;">-->
+<!--                                                <div style="height:9px; margin:5px 0;">5 <span class="glyphicon glyphicon-star"></span></div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-left" style="width:180px;">-->
+<!--                                                <div class="progress" style="height:9px; margin:8px 0;">-->
+<!--                                                  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5" style="width: 1000%">-->
+<!--                                                    <span class="sr-only">80% Complete (danger)</span>-->
+<!--                                                  </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-right" style="margin-left:10px;">1</div>-->
+<!--                                        </div>-->
+<!--                                        <div class="pull-left">-->
+<!--                                            <div class="pull-left" style="width:35px; line-height:1;">-->
+<!--                                                <div style="height:9px; margin:5px 0;">4 <span class="glyphicon glyphicon-star"></span></div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-left" style="width:180px;">-->
+<!--                                                <div class="progress" style="height:9px; margin:8px 0;">-->
+<!--                                                  <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: 80%">-->
+<!--                                                    <span class="sr-only">80% Complete (danger)</span>-->
+<!--                                                  </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-right" style="margin-left:10px;">1</div>-->
+<!--                                        </div>-->
+<!--                                        <div class="pull-left">-->
+<!--                                            <div class="pull-left" style="width:35px; line-height:1;">-->
+<!--                                                <div style="height:9px; margin:5px 0;">3 <span class="glyphicon glyphicon-star"></span></div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-left" style="width:180px;">-->
+<!--                                                <div class="progress" style="height:9px; margin:8px 0;">-->
+<!--                                                  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5" style="width: 60%">-->
+<!--                                                    <span class="sr-only">80% Complete (danger)</span>-->
+<!--                                                  </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-right" style="margin-left:10px;">0</div>-->
+<!--                                        </div>-->
+<!--                                        <div class="pull-left">-->
+<!--                                            <div class="pull-left" style="width:35px; line-height:1;">-->
+<!--                                                <div style="height:9px; margin:5px 0;">2 <span class="glyphicon glyphicon-star"></span></div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-left" style="width:180px;">-->
+<!--                                                <div class="progress" style="height:9px; margin:8px 0;">-->
+<!--                                                  <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" style="width: 40%">-->
+<!--                                                    <span class="sr-only">80% Complete (danger)</span>-->
+<!--                                                  </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-right" style="margin-left:10px;">0</div>-->
+<!--                                        </div>-->
+<!--                                        <div class="pull-left">-->
+<!--                                            <div class="pull-left" style="width:35px; line-height:1;">-->
+<!--                                                <div style="height:9px; margin:5px 0;">1 <span class="glyphicon glyphicon-star"></span></div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-left" style="width:180px;">-->
+<!--                                                <div class="progress" style="height:9px; margin:8px 0;">-->
+<!--                                                  <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" style="width: 20%">-->
+<!--                                                    <span class="sr-only">80% Complete (danger)</span>-->
+<!--                                                  </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="pull-right" style="margin-left:10px;">0</div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-7">
                                         <hr/>
                                         <div class="review-block">
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
-                                                    <div class="review-block-name"><a href="#">nktailor</a></div>
-                                                    <div class="review-block-date">January 29, 2016<br/>1 day ago</div>
-                                                </div>
-                                                <div class="col-sm-9">
-                                                    <div class="review-block-rate">
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
+                                            {% for rev in recipe.recipe_review.all %}
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
+                                                        <div class="review-block-name"><a href="#">{{rev.user.username}}</a></div>
+                                                        <div class="review-block-date">{{rev.create_at|date:"d-m-Y"}}</div>
                                                     </div>
-                                                    <div class="review-block-title">this was nice in buy</div>
-                                                    <div class="review-block-description">this was nice in buy. this was nice in buy. this was nice in buy. this was nice in buy this was nice in buy this was nice in buy this was nice in buy this was nice in buy</div>
-                                                </div>
-                                            </div>
-                                            <hr/>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
-                                                    <div class="review-block-name"><a href="#">nktailor</a></div>
-                                                    <div class="review-block-date">January 29, 2016<br/>1 day ago</div>
-                                                </div>
-                                                <div class="col-sm-9">
-                                                    <div class="review-block-rate">
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
+                                                    <div class="col-sm-9">
+                                                        <div class="review-block-rate">
+                                                            {% if rev.rate >= 1 %}
+                                                                <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                                                   <span class="fa fa-star" aria-hidden="true"></span>
+                                                                </button>
+                                                            {% else %}
+                                                                 <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                                                    <span class="fa fa-star" aria-hidden="true"></span>
+                                                                 </button>
+                                                            {% endif %}
+                                                            {% if rev.rate >= 2 %}
+                                                                <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                                                   <span class="fa fa-star" aria-hidden="true"></span>
+                                                                </button>
+                                                            {% else %}
+                                                                 <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                                                    <span class="fa fa-star" aria-hidden="true"></span>
+                                                                 </button>
+                                                            {% endif %}
+                                                            {% if rev.rate >= 3 %}
+                                                                <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                                                   <span class="fa fa-star" aria-hidden="true"></span>
+                                                                </button>
+                                                            {% else %}
+                                                                 <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                                                    <span class="fa fa-star" aria-hidden="true"></span>
+                                                                 </button>
+                                                            {% endif %}
+                                                            {% if rev.rate >= 4 %}
+                                                                <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                                                   <span class="fa fa-star" aria-hidden="true"></span>
+                                                                </button>
+                                                            {% else %}
+                                                                 <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                                                    <span class="fa fa-star" aria-hidden="true"></span>
+                                                                 </button>
+                                                            {% endif %}
+                                                            {% if rev.rate >= 5 %}
+                                                                <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
+                                                                   <span class="fa fa-star" aria-hidden="true"></span>
+                                                                </button>
+                                                            {% else %}
+                                                                 <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
+                                                                    <span class="fa fa-star" aria-hidden="true"></span>
+                                                                 </button>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="review-block-title">Content</div>
+                                                        <div class="review-block-description">{{rev.content}}</div>
                                                     </div>
-                                                    <div class="review-block-title">this was nice in buy</div>
-                                                    <div class="review-block-description">this was nice in buy. this was nice in buy. this was nice in buy. this was nice in buy this was nice in buy this was nice in buy this was nice in buy this was nice in buy</div>
                                                 </div>
-                                            </div>
-                                            <hr/>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image" class="img-rounded">
-                                                    <div class="review-block-name"><a href="#">nktailor</a></div>
-                                                    <div class="review-block-date">January 29, 2016<br/>1 day ago</div>
-                                                </div>
-                                                <div class="col-sm-9">
-                                                    <div class="review-block-rate">
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-warning btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                        <button type="button" class="btn btn-default btn-grey btn-xs" aria-label="Left Align">
-                                                          <span class="fa fa-star" aria-hidden="true"></span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="review-block-title">this was nice in buy</div>
-                                                    <div class="review-block-description">this was nice in buy. this was nice in buy. this was nice in buy. this was nice in buy this was nice in buy this was nice in buy this was nice in buy this was nice in buy</div>
-                                                </div>
-                                            </div>
+                                                <hr/>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </div>
@@ -332,9 +319,9 @@ Recipe detail
 
     <!-- The Modal Search by Ingredient -->
     <div id="addreview" class="modal fade">
-        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form>
+                <form action="/detail/{{recipe.id}}" method='POST' id="review_form" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="modal-header">
                         <h4 class="col-12 modal-title text-center">Review this recipe</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -375,7 +362,7 @@ Recipe detail
                                 </label>
                               </div>
                             <div class="form-group">
-                                <textarea class="review" id="review" placeholder="What did you think about this recipe? Did you make any changes or notes? " rows="4"></textarea>
+                                <textarea class="review" name="content" form="review_form" placeholder="What did you think about this recipe? Did you make any changes or notes? " rows="4"></textarea>
                                 </textarea>
                             </div>
                         </div>
@@ -385,11 +372,10 @@ Recipe detail
                                 <div class="col-sm-12 imgUp">
                                     <div class="imagePreview"></div>
                                 <label class="btn btn-primary">
-                                Upload<input type="file" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;">
+                                Upload<input name="images" type="file" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;">
                                 </label>
                             </div>
                             </div>
-
                         </div>
                     </div>
                     </div>
@@ -413,51 +399,23 @@ Recipe detail
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-md-4 col-sm-6">
-                    <div class="blog__item">
-                        <div class="blog__item__pic">
-                            <img src="img/blog/blog-1.jpg" alt="">
-                        </div>
-                        <div class="blog__item__text">
-                            <ul>
-                                <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                <li><i class="fa fa-comment-o"></i> 5</li>
-                            </ul>
-                            <h5><a href="#">Cooking tips make cooking simple</a></h5>
-                            <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam quaerat </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-6">
-                    <div class="blog__item">
-                        <div class="blog__item__pic">
-                            <img src="img/blog/blog-2.jpg" alt="">
-                        </div>
-                        <div class="blog__item__text">
-                            <ul>
-                                <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                <li><i class="fa fa-comment-o"></i> 5</li>
-                            </ul>
-                            <h5><a href="#">6 ways to prepare breakfast for 30</a></h5>
-                            <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam quaerat </p>
+                {% for rec in related_recipe %}
+                    <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="blog__item">
+                            <div class="blog__item__pic">
+                                <img src="{{rec.images.url}}" alt="{{rec.name}}">
+                            </div>
+                            <div class="blog__item__text">
+                                <ul>
+                                    <li><i class="fa fa-calendar-o"></i> {{rec.create_at|date:"d-m-Y"}}</li>
+                                    <li><i class="fa fa-comment-o"></i> {{rec.recipe_review.count}}</li>
+                                </ul>
+                                <h5><a href="/detail/{{rec.id}}">{{rec.name}}</a></h5>
+                                <p>{{rec.description}}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-6">
-                    <div class="blog__item">
-                        <div class="blog__item__pic">
-                            <img src="img/blog/blog-3.jpg" alt="">
-                        </div>
-                        <div class="blog__item__text">
-                            <ul>
-                                <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                                <li><i class="fa fa-comment-o"></i> 5</li>
-                            </ul>
-                            <h5><a href="#">Visit the clean farm in the US</a></h5>
-                            <p>Sed quia non numquam modi tempora indunt ut labore et dolore magnam aliquam quaerat </p>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>

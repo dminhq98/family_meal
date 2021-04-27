@@ -1,9 +1,10 @@
+import json
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views import View
 from django.http import HttpResponseRedirect
 from django.db.models import Avg
-from recipe.models import Recipe, Ingredient, Direction, Category, User, Review
+from recipe.models import Recipe, Ingredient, Direction, Category, User, Review, ImageRecipe
 from recipe.forms import RegistrationForm
 from core.ingredient import IngredientList
 from recipe.utils import load_search_initialize
@@ -14,7 +15,8 @@ from django.core.files.storage import FileSystemStorage
 # Create your views here.
 DMM_CONF_PATH = "recipe/config/dmm_config.json"
 # search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
-
+from recipe.utils import IngredientSearch
+search_ingredient = IngredientSearch()
 class HomePageView(View):
 
    def get(self, request):
@@ -22,11 +24,18 @@ class HomePageView(View):
       new_recipe1 = Recipe.objects.all().order_by('-create_at')[:3]
       new_recipe2 = Recipe.objects.all().order_by('-create_at')[3:6]
       fastest_recipes = Recipe.objects.filter(total__contains='min').order_by('total')[:6]
+      fastest_recipe1 = fastest_recipes[:3]
+      fastest_recipe2 = fastest_recipes[3:6]
       top_rate = Recipe.objects.order_by('-rate')[:6]
-      review_recipes = Review.objects.order_by('-create_at')
-
-      data = {'new_recipe1':new_recipe1, 'new_recipe2':new_recipe2, 'fastest_recipes':fastest_recipes\
-              , 'top_rate':top_rate}
+      top_rate1 = top_rate[:3]
+      top_rate2 = top_rate[3:6]
+      review_recipes = Review.objects.order_by().values_list('recipe', flat=True).distinct()[:6]
+      review_recipe1 = [Recipe.objects.get(id=i) for i in review_recipes[:3]]
+      review_recipe2 = [Recipe.objects.get(id=i) for i in review_recipes[3:6]]
+      category = Category.objects.filter(name__in=['Vegetable', 'Snacks', 'Healthy','Seafood'])[:12]
+      data = {'new_recipe1':new_recipe1, 'new_recipe2':new_recipe2, 'fastest_recipe1':fastest_recipe1\
+              , 'fastest_recipe2':fastest_recipe2, 'top_rate1':top_rate1, 'top_rate2':top_rate2,'review_recipe1':review_recipe1\
+              ,'review_recipe2':review_recipe2, 'category':category}
       return render(request, 'pages/home.html', data)
 
 class SignInView(View):
@@ -39,7 +48,7 @@ class SignInView(View):
       form = RegistrationForm(request.POST)
       if form.is_valid():
          form.save()
-         return HttpResponseRedirect('/')
+         return HttpResponseRedirect('/login')
       return render(request, 'pages/sign_in.html', {'form': form,'err':""})
 
 
@@ -48,10 +57,12 @@ class RecipeDetailView(View):
    def get(self, request, pk):
       rec = Recipe.objects.get(id=pk)
       servings = rec.servings
-      user_ingr = [i.content for i in rec.ingredient]
+      user_ingr = [i.content for i in rec.ingredient.all()]
       ingredients = IngredientList(user_ingr)
+      related_recipe = Recipe.objects.filter(category__name__in= [i.name for i in rec.category.all()] ).distinct()[:3]
       response_data = {
-         'recipe': rec,
+         "recipe": rec,
+         "related_recipe":related_recipe,
          "ingredients": user_ingr,
          "bad": ingredients.bad,
          "servings": servings,
@@ -60,16 +71,31 @@ class RecipeDetailView(View):
       return render(request, 'pages/recipe_detail.html', response_data)
 
    def post(self, request, pk):
-      rev = Review()
+      # data = request.POST.keys()
+      # a = "123"
+      # if request.POST['images']:
+      #    a = "456"
+      # return render(request, 'test.html', {'data':request.POST, 'a':a})
       rec = Recipe.objects.get(id=pk)
+      if request.FILES['images']:
+         image = request.FILES["images"]
+         fs = FileSystemStorage()
+         filename = fs.save(image.name, image)
+         # uploaded_file_url = fs.url(filename)
+         img = ImageRecipe()
+         img.recipe = rec
+         img.images = filename
+         img.save()
+      rev = Review()
       rev.recipe = rec
       rev.user = request.user
       rev.content = request.POST['content']
-      rev.rate = request.POST['rate']
-      rev.images = request.POST['images']
+      rev.rate = request.POST['stars']
+      rev.images = filename
       rev.save()
-      rec.rate = rec.recipe_review.all().aggregate(Avg('rate'))['rate__avg']
+      rec.rate = round(rec.recipe_review.all().aggregate(Avg('rate'))['rate__avg'], 1)
       rec.save()
+
       return HttpResponseRedirect(request.path)
 
 class SearchImageRecipeView(View):

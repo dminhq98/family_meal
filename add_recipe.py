@@ -5,14 +5,11 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'family_meal.settings')
 
 application = get_wsgi_application()
-from recipe.models import Recipe, Category, Ingredient, Direction, User, Review, Nutrition, MatchFood
+from recipe.models import Recipe, Category, Ingredient, Direction, User, Review, Nutrition, MatchFood, ImageRecipe
 from core.models import Food
 maxint = 1e7
-import decimal
 from core.ingredient import IngredientList
-from core.search import match_one_food
-from core.utils import singularize
-
+from search.utils import get_list_images
 def add():
     API_URL = "http://127.0.0.1:8000/signin"
 
@@ -51,6 +48,8 @@ def add_recipe():
 
     user = User.objects.get(id=1)
     for idx, dt in enumerate(data):
+        path_imgs, _ = get_list_images(os.path.join('images',dt['id']))
+        # print(len(path_imgs))
         print(dt['name'])
         rec = Recipe()
         rec.name = dt['name']
@@ -66,6 +65,12 @@ def add_recipe():
         filename = os.path.join('images', dt['images'].split('%')[-1])
         rec.images = filename
         rec.save()
+
+        for i in path_imgs:
+            img = ImageRecipe()
+            img.recipe = rec
+            img.images = i
+            img.save()
 
         categorys = dt['category']
         for i in categorys:
@@ -99,7 +104,7 @@ def add_recipe():
 import random
 from django.db.models import Avg
 def add_coment():
-    for i in range(20):
+    for i in range(50):
         idx = random.randint(0, 100)
         rev = Review()
         rec = Recipe.objects.get(id=idx)
@@ -108,10 +113,10 @@ def add_coment():
         rev.rate = random.randint(3, 5)
         rev.content = "Very good !"
         rev.save()
-        rec.rate = rec.recipe_review.all().aggregate(Avg('rate'))['rate__avg']
+        rec.rate = round(rec.recipe_review.all().aggregate(Avg('rate'))['rate__avg'], 1)
         rec.save()
 
-# add_coment()
+add_coment()
 
 def make_csv():
     with open("recipe_final.json", 'r') as f:
@@ -121,8 +126,8 @@ def make_csv():
         rec  = Recipe.objects.get(name=dt['name'])
         print(rec)
 # make_csv()
-# rec = Recipe.objects.get(id=1)
-# print(rec)
+rec = Recipe.objects.get(id=1)
+print(rec.ingredient)
 # print(rec.images.url)
 
 # user = User.objects.get(id=1)
@@ -134,3 +139,6 @@ def make_csv():
 
 # review_recipes = Review.objects.values_list('recipe', flat=True).distinct()
 # print(review_recipes)
+
+# vegetable = Recipe.objects.category.filter(name='Vegetable')[:6]
+# print(vegetable)
