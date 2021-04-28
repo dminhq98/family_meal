@@ -12,7 +12,7 @@ Share Recipe
                 <div class="col-lg-3 col-md-5">
                     <div class="sidebar">
                         <div class="sidebar__item">
-                            <h4>Department</h4>
+                            <h4>{{user.username}}</h4>
                             <ul>
                                 <li><a href="/add">Add recipe</a></li>
                                 <li><a href="/share_recipe">Shared recipes</a></li>
@@ -40,7 +40,7 @@ Share Recipe
                             {% for rec in recipes %}
                                 <tr>
                                     <td class="shoping__cart__item">
-                                        <img src="{{rec.images.url}}" alt="{{rec.name}}">
+                                        <img src="{{rec.images.url}}" alt="{{rec.name}}" width="110" height="110">
                                         <h5>{{rec.name}}</h5>
                                     </td>
                                     <td class="shoping__cart__quantity">

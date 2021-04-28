@@ -23,5 +23,6 @@ urlpatterns = [
    path('logout',auth_views.LogoutView.as_view(next_page='/'),name='logout'),
    path('manage_user', views.ManageUserView.as_view(), name='manage_user'),
    path('manage_recipe', views.ManageRecipeView.as_view(), name='manage_recipe'),
+   path('profile', views.ProfileView.as_view(), name='profile'),
 ]
 

@@ -16,8 +16,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 # Create your views here.
 DMM_CONF_PATH = "recipe/config/dmm_config.json"
-# search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
-from recipe.utils import IngredientSearch
+search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
+# from recipe.utils import IngredientSearch
 # search_ingredient = IngredientSearch()
 
 class HomePageView(View):
@@ -26,7 +26,13 @@ class HomePageView(View):
 
       if request.user.is_authenticated:
          if request.user.level == 0 or request.user.level == 1:
-            return render(request, 'admin.html')
+            data = {
+               "num_recipe":Recipe.objects.count(),
+               "num_user": User.objects.count(),
+               "num_review": Review.objects.count(),
+               "num_favore": Favore.objects.count(),
+            }
+            return render(request, 'admin/home.html', data)
 
       new_recipe1 = Recipe.objects.all().order_by('-create_at')[:3]
       new_recipe2 = Recipe.objects.all().order_by('-create_at')[3:6]
@@ -76,14 +82,16 @@ class RecipeDetailView(View):
       user_ingr = [i.content for i in rec.ingredient.all()]
       ingredients = IngredientList(user_ingr)
       related_recipe = Recipe.objects.filter(category__name__in= [i.name for i in rec.category.all()] ).distinct()[:3]
-
+      categorys = [i.name for i in rec.category.all()]
+      categorys = ','.join(categorys)
       response_data = {
          "recipe": rec,
          "related_recipe": related_recipe,
          "ingredients": user_ingr,
          "bad": ingredients.bad,
          "servings": servings,
-         "nutrition": ingredients.total_nutrition(servings)
+         "nutrition": ingredients.total_nutrition(servings),
+         "categorys":categorys
       }
       if request.user.is_authenticated:
          fav = Favore.objects.filter(user=request.user, recipe=Recipe.objects.get(id=pk))
@@ -133,7 +141,6 @@ class SearchImageRecipeView(View):
          recipes = []
          for i in res:
             try:
-               i = 'images/' + i
                img_rec = ImageRecipe.objects.get(images=i)
                if img_rec.recipe not in recipes:
                   recipes.append(img_rec.recipe)
@@ -151,7 +158,6 @@ class SearchImageRecipeView(View):
             recipes = []
             for i in res:
                try:
-                  i = 'images/'+i
                   img_rec = ImageRecipe.objects.get(images=i)
                   if img_rec.recipe not in recipes:
                      recipes.append(img_rec.recipe)
@@ -420,6 +426,16 @@ class ManageRecipeView(View):
 
    def get(self, request):
       recipes = Recipe.objects.all().order_by('-create_at')
+      paginator = Paginator(recipes, 10)
+
+      pageNumber = request.GET.get('page')
+      try:
+         recipes = paginator.page(pageNumber)
+      except PageNotAnInteger:
+         recipes = paginator.page(1)
+      except EmptyPage:
+         recipes = paginator.page(paginator.num_pages)
+
       return render(request, 'admin/manage_recipe.html', {'recipes': recipes})
 
 
@@ -427,4 +443,30 @@ class ManageUserView(View):
 
    def get(self, request):
       users = User.objects.all().order_by('-date_joined')
+      paginator = Paginator(users, 10)
+
+      pageNumber = request.GET.get('page')
+      try:
+         users = paginator.page(pageNumber)
+      except PageNotAnInteger:
+         users = paginator.page(1)
+      except EmptyPage:
+         users = paginator.page(paginator.num_pages)
       return render(request, 'admin/manage_user.html', {'users': users})
+
+   def post(self, request):
+      pk = request.POST['pk']
+      user = User.objects.get(id=pk)
+      if user.status == 0:
+         user.status = 1
+         user.is_active = 1
+      else:
+         user.status = 0
+         user.is_active = 0
+      user.save()
+      return HttpResponseRedirect(request.path)
+
+class ProfileView(View):
+
+   def get(self, request):
+      return render(request, 'admin/profile.html')

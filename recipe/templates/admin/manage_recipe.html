@@ -5,9 +5,119 @@ Manage Recipe
 {% endblock %}
 
 {% block content %}
+    <div class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title"> Manage Recipe</h4>
+              </div>
+              <div class="card-header">
+                <form>
+                    <div class="input-group no-border">
+                        <input type="text" id="myInput" value="" class="form-control" placeholder="Search...">
+                        <div class="input-group-append">
+                        <div class="input-group-text">
+                            <i class="nc-icon nc-zoom-split"></i>
+                        </div>
+                        </div>
+                    </div>
+                  </form>
+              </div>
 
+              <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>image</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="myTable">
+                        {% for rec in recipes %}
+                            <tr>
+                                <td>{{rec.id}}</td>
+                                <td>{{rec.name}}</td>
+                                <td><p style="">{% if rec.description.50 %} {{rec.description | slice:":50"}} ..... {% else %} {{rec.description}} {% endif %}</p></td>
+                                <td><img src="{{rec.images.url}}" alt="{{rec.name}}" class="img-thumbnail" width="110" height="110"></td>
+                                <td>
+                                    <button class="btn btn-info" data-toggle="modal" data-target="#detailBookModal">Detail</button>
+                                    &nbsp &nbsp
+<!--                                    <button class="btn btn-warning" data-toggle="modal" data-target="#editBookModal">Edit</button>-->
+<!--                                    &nbsp &nbsp-->
+                                    <button class="btn btn-danger" data-toggle="modal"
+                                        data-target="#deleteBookModal">Delete</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table><!--Pagination-->
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                            {% if recipes.has_previous %}
+                                <li class="page-item">
+                                <a class="page-link" href="?page={{ recipes.previous_page_number }}">Previous</a>
+                              </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                              </li>
+                            {% endif %}
+
+                            {% if recipes.number|add:'-4' > 1 %}
+                                <li class="page-item"><a class="page-link" href="?page={{ recipes.number|add:'-5' }}">&hellip;</a></li>
+                            {% endif %}
+
+                            {% for i in recipes.paginator.page_range %}
+                                {% if recipes.number == i %}
+                                    <li class="page-item active" aria-current="page">
+                                  <span class="page-link">
+                                    {{ i }}
+                                    <span class="sr-only">(current)</span>
+                                  </span>
+                                </li>
+                                {% elif i > recipes.number|add:'-5' and i < recipes.number|add:'5' %}
+                                     <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if recipes.paginator.num_pages > recipes.number|add:'4' %}
+                               <li class="page-item"><a class="page-link" href="?page={{ recipes.number|add:'5' }}">&hellip;</a></li>
+                            {% endif %}
+
+                            {% if recipes.has_next %}
+                                <li class="page-item">
+                                <a class="page-link" href="?page={{ recipes.next_page_number }}">Next</a>
+                              </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                              </li>
+                            {% endif %}
+                          </ul>
+                        </nav>
+                        <!--end of Pagination-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 {% endblock %}
 
 {% block script %}
-
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
 {% endblock %}
