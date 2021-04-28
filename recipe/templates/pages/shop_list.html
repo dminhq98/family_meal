@@ -45,10 +45,10 @@ Shopping List
                                 {% for ing in ingredients %}
                                 <tr>
                                     <td class="shoping__cart__item">
-                                        <h5>{{ing.ingredient.content}}</h5>
+                                        <h5>{{ing.content}}</h5>
                                     </td>
                                     <td>
-                                        <span>{{ing.ingredient.create_at|date:"d-m-Y"}}</span>
+                                        <span>{{ing.create_at|date:"d-m-Y"}}</span>
                                     </td>
                                     <td class="shoping__cart__total">
                                         <a class="btn btn-danger" href="/clear_shoplist/{{ing.id}}">Clear</a>

@@ -98,7 +98,7 @@ class ShopList(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_shoplist')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_shoplist')
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='ingredient_shoplist')
+    content = models.TextField()
     status = models.IntegerField(default=1)
     create_at = models.DateTimeField(auto_now_add=True)
 

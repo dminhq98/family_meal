@@ -12,6 +12,7 @@ urlpatterns = [
    path('search_ingredient', views.SearchIngredientRecipeView.as_view(), name='search_ingredient'),
    path('search_keyword', views.SearchKeywordRecipeView.as_view(), name='search_keyword'),
    path('favore_recipe', views.ListFavoreRecipeView.as_view(), name='favore_recipe'),
+   path('add_favore/<int:pk>', views.add_favore, name='add_favore'),
    path('share_recipe', views.ListShareRecipeView.as_view(), name='share_recipe'),
    path('shop_list', views.ShopListView.as_view(), name='shop_list'),
    path('add_shoplist/<int:pk>', views.add_shoplist, name='add_shoplist'),
@@ -19,6 +20,8 @@ urlpatterns = [
    path('add', views.AddRecipeView.as_view(), name='add'),
    path('edit/<int:pk>', views.EditRecipeView.as_view(), name='edit'),
    path('login', auth_views.LoginView.as_view(template_name="pages/log_in.html"), name='login'),
-   path('logout/',auth_views.LogoutView.as_view(next_page='/'),name='logout'),
+   path('logout',auth_views.LogoutView.as_view(next_page='/'),name='logout'),
+   path('manage_user', views.ManageUserView.as_view(), name='manage_user'),
+   path('manage_recipe', views.ManageRecipeView.as_view(), name='manage_recipe'),
 ]
 

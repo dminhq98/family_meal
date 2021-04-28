@@ -4,10 +4,10 @@ from django.views.generic import TemplateView
 from django.views import View
 from django.http import HttpResponseRedirect
 from django.db.models import Avg
-from recipe.models import Recipe, Ingredient, Direction, Category, User, Review, ImageRecipe, ShopList
+from recipe.models import Recipe, Ingredient, Direction, Category, User, Review, ImageRecipe, ShopList, Favore
 from recipe.forms import RegistrationForm
 from core.ingredient import IngredientList
-from recipe.utils import load_search_initialize
+from recipe.utils import load_search_initialize, parseTimes, id_generator, parseStringTimes
 from PIL import Image
 import io
 import requests
@@ -16,13 +16,17 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 # Create your views here.
 DMM_CONF_PATH = "recipe/config/dmm_config.json"
-search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
+# search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
 from recipe.utils import IngredientSearch
 # search_ingredient = IngredientSearch()
 
 class HomePageView(View):
 
    def get(self, request):
+
+      if request.user.is_authenticated:
+         if request.user.level == 0 or request.user.level == 1:
+            return render(request, 'admin.html')
 
       new_recipe1 = Recipe.objects.all().order_by('-create_at')[:3]
       new_recipe2 = Recipe.objects.all().order_by('-create_at')[3:6]
@@ -66,23 +70,25 @@ class SignInView(View):
 class RecipeDetailView(View):
 
    def get(self, request, pk):
+
       rec = Recipe.objects.get(id=pk)
       servings = rec.servings
       user_ingr = [i.content for i in rec.ingredient.all()]
       ingredients = IngredientList(user_ingr)
       related_recipe = Recipe.objects.filter(category__name__in= [i.name for i in rec.category.all()] ).distinct()[:3]
 
-      nutrion_data = {
+      response_data = {
+         "recipe": rec,
+         "related_recipe": related_recipe,
          "ingredients": user_ingr,
          "bad": ingredients.bad,
          "servings": servings,
          "nutrition": ingredients.total_nutrition(servings)
       }
-      response_data = {
-         "recipe": rec,
-         "related_recipe": related_recipe,
-         "nutrion_data": nutrion_data
-      }
+      if request.user.is_authenticated:
+         fav = Favore.objects.filter(user=request.user, recipe=Recipe.objects.get(id=pk))
+         if len(fav):
+            response_data['favore'] = True
       return render(request, 'pages/recipe_detail.html', response_data)
 
    def post(self, request, pk):
@@ -186,22 +192,47 @@ class SearchKeywordRecipeView(TemplateView):
 class ListShareRecipeView(View):
 
    def get(self, request):
-      rec = request.user.user_recipe.all()
-      return render(request, 'pages/share_recipe.html', {'recipes': rec})
+
+      if request.user.is_authenticated:
+         rec = request.user.user_recipe.all()
+         paginator = Paginator(rec, 10)
+
+         pageNumber = request.GET.get('page')
+         try:
+            rec = paginator.page(pageNumber)
+         except PageNotAnInteger:
+            rec = paginator.page(1)
+         except EmptyPage:
+            rec = paginator.page(paginator.num_pages)
+         return render(request, 'pages/share_recipe.html', {'recipes': rec})
+      else:
+         return HttpResponseRedirect('/login')
+
+   def post(self, request):
+      pk = request.POST['pk']
+      Recipe.objects.filter(id=pk).delete()
+      return HttpResponseRedirect(request.path)
 
 class ListFavoreRecipeView(View):
 
    def get(self, request):
-      rec = request.user.user_favore.all()
-      rec = [i.recipe for i in rec]
-      return render(request, 'pages/favore_recipe.html', {'recipes': rec})
+      if request.user.is_authenticated:
+         rec = request.user.user_favore.all()
+         rec = [i.recipe for i in rec]
+         return render(request, 'pages/favore_recipe.html', {'recipes': rec})
+      else:
+         return HttpResponseRedirect('/login')
 
 class ShopListView(View):
 
    def get(self, request):
-      ingredients = request.user.user_shoplist.all()
-      # ingredients = [i.ingredient for i in ingredients]
-      return render(request, 'pages/shop_list.html', {'ingredients': ingredients})
+      if request.user.is_authenticated:
+         ingredients = request.user.user_shoplist.all()
+         # ingredients = [i.ingredient for i in ingredients]
+         return render(request, 'pages/shop_list.html', {'ingredients': ingredients})
+      else:
+         return HttpResponseRedirect('/login')
+
 
    def post(self, request):
       request.user.user_shoplist.all().delete()
@@ -222,54 +253,178 @@ def add_shoplist(request, pk):
          shp = ShopList()
          shp.recipe = Recipe.objects.get(id=pk)
          shp.user = request.user
-         shp.ingredient = Ingredient.objects.get(id=i)
+         shp.content = Ingredient.objects.get(id=i).content
          shp.save()
       return HttpResponseRedirect('/shop_list')
    else:
       return HttpResponseRedirect('/login')
 
-class AddRecipeView(TemplateView):
-   template_name = "pages/add_recipe.html"
+def add_favore(request, pk):
+   if request.user.is_authenticated:
+      fav = Favore.objects.filter(user=request.user, recipe=Recipe.objects.get(id=pk))
+      if len(fav):
+         fav.delete()
+      else:
+         favore = Favore()
+         favore.recipe = Recipe.objects.get(id=pk)
+         favore.user = request.user
+         favore.save()
+      return HttpResponseRedirect(f'/detail/{pk}')
+   else:
+      return HttpResponseRedirect('/login')
+
+class AddRecipeView(View):
+
+   def get(self, request):
+      if request.user.is_authenticated:
+         return render(request, 'pages/add_recipe.html')
+      else:
+         return HttpResponseRedirect('/login')
 
    def post(self, request):
       rec = Recipe()
       rec.name = request.POST['name']
-      rec.servings = int(request.POST['servings'])
-      rec.prep = request.POST['prep']
-      rec.cook = request.POST['cook']
-      rec.total = request.POST['total']
-      rec.note = request.POST['note']
+      if request.POST['note']:
+         rec.note = request.POST['note']
       rec.description = request.POST['description']
-      rec.images = request.POST['image']
+      rec.servings = int(request.POST['servings'])
+      prep, prep_min = parseTimes(request.POST['prep'], request.POST['prepTimeUnit'])
+      cook, cook_min = parseTimes(request.POST['cook'], request.POST['cookTimeUnit'])
+      rec.prep = prep
+      rec.cook = cook
+      rec.total_min = prep_min + cook_min
+      image = request.FILES["image-file"]
+      fs = FileSystemStorage()
+      name = id_generator() + image.name
+      filename = fs.save(name, image)
+      rec.images = filename
+      rec.rate = 0
+      rec.user = request.user
       rec.save()
 
+      img = ImageRecipe()
+      img.recipe = rec
+      img.images = filename
+      img.save()
+
       categorys = request.POST['category']
+      categorys = categorys.split(',')
       for i in categorys:
+         if i.strip() == '':
+            continue
          cate = Category()
          cate.recipe = rec
-         cate.name = i
+         cate.name = i.strip()
          cate.save()
 
       ingredients = request.POST['ingredient']
+      ingredients = ingredients.split('\n')
       for i in ingredients:
+         if i.strip() == '':
+            continue
          ing = Ingredient()
          ing.recipe = rec
-         ing.content = i
+         ing.content = i.strip()
          ing.save()
 
       direction = request.POST['direction']
+      direction = direction.split('\n')
       for i in direction:
+         if i.strip() == '':
+            continue
          dire = Direction()
          dire.recipe = rec
-         dire.content = i
+         dire.content = i.strip()
          dire.save()
       return HttpResponseRedirect('/share_recipe')
 
-class EditRecipeView(TemplateView):
-   template_name = "pages/edit_recipe.html"
+class EditRecipeView(View):
+
+   def get(self, request, pk):
+      if request.user.is_authenticated:
+         rec = Recipe.objects.get(id=pk)
+         ingredients = [i.content for i in rec.ingredient.all()]
+         ingredients = '\n'.join(ingredients)
+         directions = [i.content for i in rec.direction.all()]
+         directions = '\n'.join(directions)
+         categorys = [i.name for i in rec.category.all()]
+         categorys = ','.join(categorys)
+         prep, prep_unit = parseStringTimes(rec.prep)
+         cook, cook_unit = parseStringTimes(rec.cook)
+         return render(request, 'pages/edit_recipe.html', {'recipe': rec, 'ingredients':ingredients, 'directions':directions,\
+                           'categorys':categorys,'prep':prep, 'prep_unit':prep_unit,'cook':cook,'cook_unit':cook_unit})
+      else:
+         return HttpResponseRedirect('/login')
+
+   def post(self, request, pk):
+      rec = Recipe.objects.get(id=pk)
+      rec.name = request.POST['name']
+      if request.POST['note']:
+         rec.note = request.POST['note']
+      rec.description = request.POST['description']
+      rec.servings = int(request.POST['servings'])
+      prep, prep_min = parseTimes(request.POST['prep'], request.POST['prepTimeUnit'])
+      cook, cook_min = parseTimes(request.POST['cook'], request.POST['cookTimeUnit'])
+      rec.prep = prep
+      rec.cook = cook
+      rec.total_min = prep_min + cook_min
+      if "search-file" in request.FILES and request.FILES["image-file"]:
+         image = request.FILES["image-file"]
+         fs = FileSystemStorage()
+         name = id_generator() + image.name
+         filename = fs.save(name, image)
+         rec.images = filename
+         img = ImageRecipe()
+         img.recipe = rec
+         img.images = filename
+         img.save()
+      rec.rate = 0
+      rec.user = request.user
+      rec.save()
+
+      rec.category.all().delete()
+      categorys = request.POST['category']
+      categorys = categorys.split(',')
+      for i in categorys:
+         if i.strip() == '':
+            continue
+         cate = Category()
+         cate.recipe = rec
+         cate.name = i.strip()
+         cate.save()
+
+      rec.ingredient.all().delete()
+      ingredients = request.POST['ingredient']
+      ingredients = ingredients.split('\n')
+      for i in ingredients:
+         if i.strip() == '':
+            continue
+         ing = Ingredient()
+         ing.recipe = rec
+         ing.content = i.strip()
+         ing.save()
+
+      rec.direction.all().delete()
+      direction = request.POST['direction']
+      direction = direction.split('\n')
+      for i in direction:
+         if i.strip() == '':
+            continue
+         dire = Direction()
+         dire.recipe = rec
+         dire.content = i.strip()
+         dire.save()
+      return HttpResponseRedirect('/share_recipe')
+
+class ManageRecipeView(View):
+
+   def get(self, request):
+      recipes = Recipe.objects.all().order_by('-create_at')
+      return render(request, 'admin/manage_recipe.html', {'recipes': recipes})
 
 
+class ManageUserView(View):
 
-# from recipe.models import Recipe, Ingredient, Direction, Category
-# from django.http import HttpResponseRedirect
-
+   def get(self, request):
+      users = User.objects.all().order_by('-date_joined')
+      return render(request, 'admin/manage_user.html', {'users': users})

@@ -199,7 +199,7 @@ $(function() {
 	$.fn.tagsInput = function(options) {
 		var settings = jQuery.extend({
 			interactive: true,
-			placeholder: 'Add ingredient',
+//			placeholder: 'Add ingredient',
 			minChars: 0,
 			maxChars: null,
 			limit: null,
@@ -475,3 +475,11 @@ $(function() {
 	 };
 })(jQuery);
 
+jQuery(function($) {
+  $('#swapHeart').on('click', function() {
+    var $el = $(this),
+      textNode = this.lastChild;
+    $el.find('span').toggleClass('glyphicon-heart glyphicon-heart-empty');
+    $el.toggleClass('swap');
+  });
+});

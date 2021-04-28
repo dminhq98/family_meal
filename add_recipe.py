@@ -7,22 +7,43 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'family_meal.settings')
 application = get_wsgi_application()
 from recipe.models import Recipe, Category, Ingredient, Direction, User, Review, Nutrition, MatchFood, ImageRecipe, Favore
 from core.models import Food
-maxint = 1e7
+
 from core.ingredient import IngredientList
 from search.utils import get_list_images
+
 def add():
+    user = User()
+    user.username = 'root'
+    user.name = 'Root'
+    user.address = 'Root system'
+    user.birthday = '2021-05-01'
+    user.set_password('root@123')
+    user.level = 0
+    user.save()
+
+    user = User()
+    user.username = 'admin'
+    user.name = 'Duong Minh Quang'
+    user.address = 'HUST'
+    user.birthday = '1998-05-13'
+    user.set_password('123456')
+    user.level = 1
+    user.save()
+
     user = User()
     user.username = 'dminhq98'
     user.name = 'Duong Minh Quang'
     user.address = 'HUST'
-    user.birthday = '1998-05-13 00:00:00'
+    user.birthday = '1998-05-13'
     user.set_password('123456')
     user.level = 2
     user.save()
-
-# add()
+    global user_id
+    user_id = user.id
+add()
 
 def parseTimes(time_str):
+    maxint = 1e7
     hour = 0
     minues = 0
     if time_str == 0:
@@ -41,7 +62,7 @@ def add_recipe():
     with open("recipe_final.json", 'r') as f:
         data = json.load(f)
 
-    user = User.objects.get(id=1)
+    user = User.objects.get(id=user_id)
     for idx, dt in enumerate(data):
         path_imgs, _ = get_list_images(os.path.join('images',dt['id']))
         # print(len(path_imgs))
@@ -95,7 +116,7 @@ def add_recipe():
             dire.content = i
             dire.save()
         # if idx == 100: break
-# add_recipe()
+add_recipe()
 import random
 from django.db.models import Avg
 def add_coment():
@@ -105,7 +126,7 @@ def add_coment():
         rev = Review()
         rec = Recipe.objects.get(id=idx)
         rev.recipe = rec
-        rev.user = User.objects.get(id=1)
+        rev.user = User.objects.get(id=user_id)
         rev.rate = random.randint(3, 5)
         rev.content = "Very good !"
         rev.save()
@@ -120,7 +141,7 @@ def add_favore():
         fav = Favore()
         rec = Recipe.objects.get(id=idx)
         fav.recipe = rec
-        fav.user = User.objects.get(id=1)
+        fav.user = User.objects.get(id=user_id)
         fav.save()
 add_favore()
 # make_csv()

@@ -66,8 +66,20 @@ Recipe detail
                         <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Prep: <span>{{recipe.prep}}</span></div>
                         <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Cook: <span>{{recipe.cook}}</span></div>
                         <div class="checkout__order__products"><i class="fa fa-user-o"></i> Servings: <span>{{recipe.servings}}</span></div>
-                        <button  type="submit" class="btn btn-outline-secondary" id="calculate-button" onclick="showNutrition()" data-toggle="modal" data-target="#result-modal">Nutrition Info</button>
+                        <button  type="submit" class="btn btn-outline-secondary" id="calculate-button" data-toggle="modal" data-target="#result-modal">Nutrition Info</button>
                     </div>
+                    <hr>
+                    {% if favore %}
+                        <a type="button" href="/add_favore/{{recipe.id}}" class="btn btn-success btn-circle btn-xl" ><i class="fa fa-heart"  style="font-size:36px;color:red"></i></a>
+                    {% else %}
+                        <a type="button" href="/add_favore/{{recipe.id}}" class="btn btn-success btn-circle btn-xl" ><i class="fa fa-heart" style="font-size:36px"></i></a>
+                    {% endif %}
+                    <hr>
+                    {% if recipe.note %}
+                    <div class="alert alert-light">
+                      <strong>Note:</strong> {{recipe.note}}
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="col-lg-12">
                     <div class="product__details__tab">
@@ -320,33 +332,44 @@ Recipe detail
     </section>
     <!-- Recipe Details Section End -->
 
-<div class="modal" id="result-modal" style="display:none;">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Nutrion</div>
-                <button type="button" id="modal-close" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="nutrition-chart" style="width: 100%; min-height: 300px"></div>
-                <div id="nutrition-table" class="siimple-table siimple-table--border">
-                    <div class="siimple-table-header">
-                        <div class="siimple-table-row">
-                            <div class="siimple-table-cell">Nutrient</div>
-                            <div class="siimple-table-cell">Summary</div>
-                            <div class="siimple-table-cell">Serving</div>
-                        </div>
-                    </div>
-                    <div class="siimple-table-body" id="nutrition-table-body">
-                    </div>
+    <div class="modal" id="result-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Nutrion</div>
+                    <button type="button" id="modal-close" class="close" data-dismiss="modal">&times;</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                Note that presented values are approximate and shouldn't be considered as real.
+                <div class="modal-body">
+    <!--                <div id="nutrition-chart" style="width: 100%; min-height: 300px"></div>-->
+                    <div id="nutrition-table" class="siimple-table siimple-table--border">
+                        <div class="siimple-table-header">
+                            <div class="siimple-table-row">
+                                <div class="siimple-table-cell">Nutrient</div>
+                                <div class="siimple-table-cell">Summary</div>
+                                <div class="siimple-table-cell">Serving</div>
+                            </div>
+                        </div>
+                        <div class="siimple-table-body" id="nutrition-table-body">
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Energy</div><div class="siimple-table-cell">{{nutrition.ENERGY.0}} {{nutrition.ENERGY.2}}</div><div class="siimple-table-cell">{{nutrition.ENERGY.1}} {{nutrition.ENERGY.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Fat</div><div class="siimple-table-cell">{{nutrition.FAT.0}} {{nutrition.FAT.2}}</div><div class="siimple-table-cell">{{nutrition.FAT.1}} {{nutrition.FAT.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Protein</div><div class="siimple-table-cell">{{nutrition.PROTEIN.0}} {{nutrition.PROTEIN.2}}</div><div class="siimple-table-cell">{{nutrition.PROTEIN.1}} {{nutrition.PROTEIN.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Carbs</div><div class="siimple-table-cell">{{nutrition.CARB.0}} {{nutrition.CARB.2}}</div><div class="siimple-table-cell">{{nutrition.CARB.1}} {{nutrition.CARB.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Sat Fat</div><div class="siimple-table-cell">{{nutrition.FAT_SAT.0}} {{nutrition.FAT_SAT.2}}</div><div class="siimple-table-cell">{{nutrition.FAT_SAT.1}} {{nutrition.FAT_SAT.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Polyunsat Fat</div><div class="siimple-table-cell">{{nutrition.FAT_POLY.0}} {{nutrition.FAT_POLY.2}}</div><div class="siimple-table-cell">{{nutrition.FAT_POLY.1}} {{nutrition.FAT_POLY.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Monounsat Fat</div><div class="siimple-table-cell">{{nutrition.FAT_MONO.0}} {{nutrition.FAT_MONO.2}}</div><div class="siimple-table-cell">{{nutrition.FAT_MONO.1}} {{nutrition.FAT_MONO.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Sugar</div><div class="siimple-table-cell">{{nutrition.SUGAR.0}} {{nutrition.SUGAR.2}}</div><div class="siimple-table-cell">{{nutrition.SUGAR.1}} {{nutrition.SUGAR.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Chole</div><div class="siimple-table-cell">{{nutrition.CHOLE.0}} {{nutrition.CHOLE.2}}</div><div class="siimple-table-cell">{{nutrition.CHOLE.1}} {{nutrition.CHOLE.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Sodium</div><div class="siimple-table-cell">{{nutrition.SODIUM.0}} {{nutrition.SODIUM.2}}</div><div class="siimple-table-cell">{{nutrition.SODIUM.1}} {{nutrition.SODIUM.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Potas</div><div class="siimple-table-cell">{{nutrition.POTAS.0}} {{nutrition.POTAS.2}}</div><div class="siimple-table-cell">{{nutrition.POTAS.1}} {{nutrition.POTAS.2}}</div></div>
+                            <div class="siimple-table-row"><div class="siimple-table-cell">Fiber</div><div class="siimple-table-cell">{{nutrition.FIBER.0}} {{nutrition.FIBER.2}}</div><div class="siimple-table-cell">{{nutrition.FIBER.1}} {{nutrition.FIBER.2}}</div></div></div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    Note that presented values are approximate and shouldn't be considered as real.
+                </div>
             </div>
         </div>
     </div>
-</div>
     <!-- The Modal Search by Ingredient -->
     <div id="addreview" class="modal fade">
             <div class="modal-content">

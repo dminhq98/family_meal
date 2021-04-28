@@ -1,10 +1,15 @@
 import decimal
 import json
 import os
+import string
+import random
 from core.search import match_one_food
 from core.utils import singularize
 from recipe.models import Recipe
 from search import SimilaritySearch
+
+def id_generator(size=64, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 def getIngredientList(ingredient_name_list):
     ingredient_list_id = [match_one_food(singularize(i)) for i in ingredient_name_list]
@@ -92,3 +97,43 @@ def load_search_initialize(config_img_path):
     )
 
     return search_ingredient, searche_image
+
+def parseTimes(time, unit):
+    maxint = 1e7
+    if time == 0:
+        return None, 0
+    if unit == 1:
+        if time == 1:
+            time_str = "1 min"
+        else:
+            time_str = str(time) + " mins"
+        time_min = float(time)*int(unit)
+    elif unit == 60:
+        if time == 1:
+            time_str = "1 hr"
+        else:
+            time_str = str(time) + " hrs"
+        time_min = float(time) * int(unit)
+    else:
+        if time == 1:
+            time_str = "1 day"
+        else:
+            time_str = str(time) + " days"
+        time_min = float(time) * int(unit)
+    time_min = int(time_min)
+    if time_min > maxint: time_min = maxint
+    return time_str, time_min
+
+def parseStringTimes(time_str):
+    if time_str == 0 or not time_str:
+        return 0, 1
+    if 'day' in time_str:
+        time = time_str.split(' ')[0].strip()
+        unit = 1440
+    elif 'hr' in time_str:
+        time = time_str.split(' ')[0].strip()
+        unit = 60
+    else:
+        time = time_str.split(' ')[0].strip()
+        unit = 1
+    return float(time), unit

@@ -5,7 +5,7 @@ Add Recipe
 {% endblock %}
 
 {% block content %}
-<!-- Product Section Begin -->
+    <!-- Product Section Begin -->
     <section class="product spad">
         <div class="container">
             <div class="row">
@@ -14,9 +14,10 @@ Add Recipe
                         <div class="sidebar__item">
                             <h4>Department</h4>
                             <ul>
-                                <li><a href="#">Add recipe</a></li>
-                                <li><a href="#">Shared recipes</a></li>
-                                <li><a href="#">Favorite recipes</a></li>
+                                <li><a href="/add">Add recipe</a></li>
+                                <li><a href="/share_recipe">Shared recipes</a></li>
+                                <li><a href="/favore_recipe">Favorite recipes</a></li>
+                                <li><a href="/shop_list">Shopping List</a></li>
                             </ul>
                         </div>
                     </div>
@@ -28,35 +29,35 @@ Add Recipe
                         </div>
                         <div class="row">
                             <div class="checkout__form">
-                                <form action="#">
+                                <form action="/add" method='POST' id="share_form" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="row">
                                         <div class="col-lg-8 col-md-6">
                                             <div class="checkout__input">
                                                 <p>Recipe title<span>*</span></p>
-                                                <input type="text">
+                                                <input name="name" type="text" required>
                                             </div>
                                             <div class="checkout__input">
                                                 <p>Description<span>*</span></p>
-                                                <textarea class="input-description" id="description" placeholder="Recipe Description" rows="4"></textarea>
-                                                </textarea>
+                                                <textarea class="input-description" name="description" form="share_form" placeholder="Recipe Description" rows="4"></textarea>
                                             </div>
                                             <div class="checkout__input">
-                                                <p>Note<span>*</span></p>
-                                                <textarea class="input-note" id="description" placeholder="Recipe Note" rows="4"></textarea>
-                                                </textarea>
+                                                <p>Note</p>
+                                                <textarea class="input-note" name="note" form="share_form" placeholder="Recipe Note" rows="3"></textarea>
                                             </div>
                                             <div class="checkout__input">
                                                 <p>Ingredients<span>*</span></p>
-                                                <textarea class="input-description" id="description" placeholder="Put each ingredient on its own line." rows="4"></textarea>
-                                                </textarea>
+                                                <p><span>Put each ingredient on its own line.</span></p>
+                                                <textarea class="input-description" name="ingredient" form="share_form" placeholder="1 chicken breast
+2 eggs
+200 g of all-purpose flour
+..." rows="8"></textarea>
                                             </div>
                                             <div class="checkout__input">
                                                 <p>Directions<span>*</span></p>
-                                                <textarea class="input-description" id="description" placeholder="Put each step on its own line." rows="4"></textarea>
-                                                </textarea>
+                                                <textarea class="input-description" name="direction" form="share_form" placeholder="Put each step on its own line." rows="10"></textarea>
                                             </div>
 
-                                            <button  type="submit" class="site-btn">Add recipe</button>
                                         </div>
                                         <div class="col-lg-4 col-md-6">
                                             <div class="checkout__add">
@@ -65,20 +66,20 @@ Add Recipe
                                                     <div class="col-sm-12 imgUp">
                                                         <div class="imagePreview"></div>
                                                     <label class="btn btn-primary">
-                                                    Upload<input type="file" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;">
+                                                    Upload<input type="file" name="image-file" class="uploadFile img" required value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;">
                                                     </label>
                                                       </div><!-- col-2 -->
                                                       <!-- <i class="fa fa-plus imgAdd"></i> -->
                                                     <div class="col-lg-6">
                                                         <div class="checkout__input">
                                                             <p>Cook Time:<span>*</span></p>
-                                                            <input type="number" min="0" step="1">
+                                                            <input name="cook" type="number" min="0" step="0.01" value="0">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <div class="checkout__input">
                                                             <p>Unit<span>*</span></p>
-                                                            <select id="prepTimeUnit" >
+                                                            <select id="cookTimeUnit" name="cookTimeUnit" >
                                                                 <option value="1">Minutes</option>
                                                                 <option value="60">Hours</option>
                                                                 <option value="1440">Days</option>
@@ -90,13 +91,13 @@ Add Recipe
                                                     <div class="col-lg-6">
                                                         <div class="checkout__input">
                                                             <p>Prep Time:<span></span></p>
-                                                            <input type="number" min="0" step="1">
+                                                            <input name="prep" type="number" min="0" step="0.01" value="0">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <div class="checkout__input">
                                                             <p>Unit<span></span></p>
-                                                            <select id="prepTimeUnit" >
+                                                            <select id="prepTimeUnit" name="prepTimeUnit">
                                                                 <option value="1">Minutes</option>
                                                                 <option value="60">Hours</option>
                                                                 <option value="1440">Days</option>
@@ -106,13 +107,22 @@ Add Recipe
                                                     <div class="col-lg-6">
                                                         <div class="checkout__input">
                                                             <p>Servers:<span>*</span></p>
-                                                            <input type="number">
+                                                            <input name="servings" type="number" min="1" step="1" value="1">
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                    <div class="checkout__input">
+                                                        <p>Category<span>*</span></p>
+                                                        <input type="text" id="form-tags-2" name="category" class="form-control" required placeholder="Add category">
+                                                    </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <button  type="submit" class="site-btn">Add recipe</button>
                                 </form>
                             </div>
                         </div>
