@@ -11,6 +11,19 @@ Manage Recipe
             <div class="card">
               <div class="card-header">
                 <h4 class="card-title"> Manage Recipe</h4>
+                  <select name="form" class="form-control" onchange="location = this.value;">
+                      <option value = "/manage_recipe">All</option>
+                      {% if request.path == '/recipe_active' %}
+                      <option selected value="/recipe_active" >Active</option>
+                      {% else %}
+                      <option value="/recipe_active" >Active</option>
+                      {% endif %}
+                      {% if request.path == '/recipe_disable' %}
+                      <option selected value="/recipe_disable" >Disable</option>
+                      {% else %}
+                      <option value="/recipe_disable" >Disable</option>
+                      {% endif %}
+                  </select>
               </div>
               <div class="card-header">
                 <form>
@@ -32,8 +45,9 @@ Manage Recipe
                             <tr>
                                 <th>ID</th>
                                 <th>Title</th>
-                                <th>Description</th>
+                                <th>Date</th>
                                 <th>image</th>
+                                <th></th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -41,16 +55,18 @@ Manage Recipe
                         {% for rec in recipes %}
                             <tr>
                                 <td>{{rec.id}}</td>
-                                <td>{{rec.name}}</td>
-                                <td><p style="">{% if rec.description.50 %} {{rec.description | slice:":50"}} ..... {% else %} {{rec.description}} {% endif %}</p></td>
-                                <td><img src="{{rec.images.url}}" alt="{{rec.name}}" class="img-thumbnail" width="110" height="110"></td>
+                                <td style="white-space:pre-wrap; word-wrap:break-word">{{rec.name}}</td>
+                                <td>{{rec.create_at|date:"M d, Y"}}</td>
+                                <td ><img src="{{rec.images.url}}" alt="{{rec.name}}" class="img-thumbnail" width="110" height="110"></td>
                                 <td>
-                                    <button class="btn btn-info" data-toggle="modal" data-target="#detailBookModal">Detail</button>
-                                    &nbsp &nbsp
-<!--                                    <button class="btn btn-warning" data-toggle="modal" data-target="#editBookModal">Edit</button>-->
-<!--                                    &nbsp &nbsp-->
-                                    <button class="btn btn-danger" data-toggle="modal"
-                                        data-target="#deleteBookModal">Delete</button>
+                                    <a class="btn btn-success" href="/detail/{{rec.id}}" target="_blank">Detail</a>
+                                </td>
+                                <td>
+                                    <form action="/manage_recipe" method='POST'>
+                                        {% csrf_token %}
+                                            <input type="hidden" id="pk" name="pk" value="{{rec.id}}">
+                                            {% if rec.status %} <button class="btn btn-danger" type="submit">Disable</button> {% else %} <button class="btn btn-primary" type="submit">Activate</button> {% endif %}
+                                    </form>
                                 </td>
                             </tr>
                         {% endfor %}

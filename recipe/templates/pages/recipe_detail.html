@@ -68,7 +68,8 @@ Recipe detail
                         <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Prep: <span>{{recipe.prep}}</span></div>
                         <div class="checkout__order__products"><i class="fa fa-clock-o"></i> Cook: <span>{{recipe.cook}}</span></div>
                         <div class="checkout__order__products"><i class="fa fa-user-o"></i> Servings: <span>{{recipe.servings}}</span></div>
-                        <button  type="submit" class="btn btn-outline-secondary" id="calculate-button" data-toggle="modal" data-target="#result-modal">Nutrition Info</button>
+                        <p><strong>Per Serving:</strong> {{nutrition.ENERGY.1}} {{nutrition.ENERGY.2}}; protein {{nutrition.PROTEIN.1}} {{nutrition.PROTEIN.2}}; carbohydrates {{nutrition.CARB.1}} {{nutrition.CARB.2}}; fat {{nutrition.FAT.1}} {{nutrition.FAT.2}}; cholesterol {{nutrition.CHOLE.1}} {{nutrition.CHOLE.2}}; sodium {{nutrition.SODIUM.1}} {{nutrition.SODIUM.2}}. </p>
+                        <button  type="submit" class="btn btn-outline-secondary" id="calculate-button" data-toggle="modal" data-target="#result-modal">Full Nutrition</button>
                     </div>
                     <hr>
                     {% if favore %}

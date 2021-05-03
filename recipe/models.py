@@ -12,6 +12,7 @@ class User(AbstractUser):
     address = models.TextField()
     level = models.IntegerField()
     status = models.IntegerField(default=1)
+    description = models.TextField(null=True)
     # create_at = models.DateTimeField(auto_now_add=True)
     REQUIRED_FIELDS = []
     def __str__(self):  # pragma: no cover
@@ -32,6 +33,7 @@ class Recipe(models.Model):
     description = models.TextField(null=True)
     images = models.ImageField(null=True, upload_to='images')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_recipe')
+    status = models.IntegerField(default=1)
     create_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):  # pragma: no cover

@@ -1,5 +1,5 @@
 import json
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.views import View
 from django.http import HttpResponseRedirect
@@ -14,9 +14,12 @@ import requests
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 # Create your views here.
 DMM_CONF_PATH = "recipe/config/dmm_config.json"
-search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
+# search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
 # from recipe.utils import IngredientSearch
 # search_ingredient = IngredientSearch()
 
@@ -106,7 +109,13 @@ class RecipeDetailView(View):
       #    a = "456"
       # return render(request, 'test.html', {'data':request.POST, 'a':a})
       rec = Recipe.objects.get(id=pk)
-      if request.FILES['images']:
+      rev = Review()
+      rev.recipe = rec
+      rev.user = request.user
+      rev.content = request.POST['content']
+      rev.rate = request.POST['stars']
+      is_imasge = request.FILES.get('images', False)
+      if is_imasge:
          image = request.FILES["images"]
          fs = FileSystemStorage()
          filename = fs.save(image.name, image)
@@ -115,12 +124,7 @@ class RecipeDetailView(View):
          img.recipe = rec
          img.images = filename
          img.save()
-      rev = Review()
-      rev.recipe = rec
-      rev.user = request.user
-      rev.content = request.POST['content']
-      rev.rate = request.POST['stars']
-      rev.images = filename
+         rev.images = filename
       rev.save()
       rec.rate = round(rec.recipe_review.all().aggregate(Avg('rate'))['rate__avg'], 1)
       rec.save()
@@ -438,6 +442,60 @@ class ManageRecipeView(View):
 
       return render(request, 'admin/manage_recipe.html', {'recipes': recipes})
 
+   def post(self, request):
+      pk = request.POST['pk']
+      rec = Recipe.objects.get(id=pk)
+      if rec.status == 0:
+         rec.status = 1
+         rec.save()
+         if Recipe.objects.filter(status=0, user=rec.user).count() < 2:
+            user = User.objects.get(id=rec.user.id)
+            user.status = 1
+            user.is_active = 1
+            user.save()
+         return HttpResponseRedirect('/recipe_active')
+      else:
+         rec.status = 0
+         rec.save()
+         if Recipe.objects.filter(status=0, user=rec.user).count() > 1:
+            user = User.objects.get(id=rec.user.id)
+            user.status = 0
+            user.is_active = 0
+            user.save()
+         return HttpResponseRedirect('/recipe_disable')
+      # return HttpResponseRedirect(request.path)
+
+class ManageRecipeActiveView(View):
+
+   def get(self, request):
+      recipes = Recipe.objects.order_by('-create_at').filter(status=1)
+      paginator = Paginator(recipes, 10)
+
+      pageNumber = request.GET.get('page')
+      try:
+         recipes = paginator.page(pageNumber)
+      except PageNotAnInteger:
+         recipes = paginator.page(1)
+      except EmptyPage:
+         recipes = paginator.page(paginator.num_pages)
+
+      return render(request, 'admin/manage_recipe.html', {'recipes': recipes})
+
+class ManageDisableActiveView(View):
+
+   def get(self, request):
+      recipes = Recipe.objects.order_by('-create_at').filter(status=0)
+      paginator = Paginator(recipes, 10)
+
+      pageNumber = request.GET.get('page')
+      try:
+         recipes = paginator.page(pageNumber)
+      except PageNotAnInteger:
+         recipes = paginator.page(1)
+      except EmptyPage:
+         recipes = paginator.page(paginator.num_pages)
+
+      return render(request, 'admin/manage_recipe.html', {'recipes': recipes})
 
 class ManageUserView(View):
 
@@ -466,7 +524,86 @@ class ManageUserView(View):
       user.save()
       return HttpResponseRedirect(request.path)
 
+class ManageUserActiveView(View):
+
+   def get(self, request):
+      users = User.objects.all().order_by('-date_joined').filter(status=1)
+      paginator = Paginator(users, 10)
+
+      pageNumber = request.GET.get('page')
+      try:
+         users = paginator.page(pageNumber)
+      except PageNotAnInteger:
+         users = paginator.page(1)
+      except EmptyPage:
+         users = paginator.page(paginator.num_pages)
+      return render(request, 'admin/manage_user.html', {'users': users})
+
+class ManageUserDisableView(View):
+
+   def get(self, request):
+      users = User.objects.all().order_by('-date_joined').filter(status=0)
+      paginator = Paginator(users, 10)
+
+      pageNumber = request.GET.get('page')
+      try:
+         users = paginator.page(pageNumber)
+      except PageNotAnInteger:
+         users = paginator.page(1)
+      except EmptyPage:
+         users = paginator.page(paginator.num_pages)
+      return render(request, 'admin/manage_user.html', {'users': users})
+
 class ProfileView(View):
 
    def get(self, request):
       return render(request, 'admin/profile.html')
+
+   def post(self, request):
+      user = request.user
+      user.name = request.POST['name']
+      user.email = request.POST['email']
+      user.address = request.POST['address']
+      user.birthday = request.POST['birthday']
+      user.description = request.POST['description']
+      user.save()
+      return HttpResponseRedirect(request.path)
+
+class PasswordView(View):
+
+   def get(self, request):
+      form = PasswordChangeForm(request.user)
+      return render(request, 'admin/change_password.html', {'form':form})
+
+   def post(self, request):
+      form = PasswordChangeForm(request.user, request.POST)
+      if form.is_valid():
+         user = form.save()
+         update_session_auth_hash(request, user)  # Important!
+         messages.success(request, 'Your password was successfully updated!')
+         return redirect('/password')
+      else:
+         messages.error(request, 'Please correct the error below.')
+         return redirect('/password')
+
+def change_password(request):
+   if request.method == 'POST':
+      form = PasswordChangeForm(request.user, request.POST)
+      form.fields['old_password'].widget.attrs = {'class': 'form-control'}
+      if form.is_valid():
+         user = form.save()
+         update_session_auth_hash(request, user)  # Important!
+         messages.success(request, 'Your password was successfully updated!')
+         return redirect('/change_password')
+      else:
+         messages.error(request, 'Please correct the error below.')
+   else:
+      form = PasswordChangeForm(request.user)
+      if request.user.level == 2:
+         return render(request, 'pages/change_password.html', {
+            'form': form
+         })
+      else:
+         return render(request, 'admin/change_password.html', {
+            'form': form
+         })

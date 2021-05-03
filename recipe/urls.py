@@ -21,8 +21,14 @@ urlpatterns = [
    path('edit/<int:pk>', views.EditRecipeView.as_view(), name='edit'),
    path('login', auth_views.LoginView.as_view(template_name="pages/log_in.html"), name='login'),
    path('logout',auth_views.LogoutView.as_view(next_page='/'),name='logout'),
+   path('change_password', views.change_password, name='change_password'),
    path('manage_user', views.ManageUserView.as_view(), name='manage_user'),
+   path('user_active', views.ManageUserActiveView.as_view(), name='manage_user_active'),
+   path('user_disable', views.ManageUserDisableView.as_view(), name='manage_user_disable'),
    path('manage_recipe', views.ManageRecipeView.as_view(), name='manage_recipe'),
+   path('recipe_active', views.ManageRecipeActiveView.as_view(), name='manage_recipe_active'),
+   path('recipe_disable', views.ManageDisableActiveView.as_view(), name='manage_recipe_disable'),
    path('profile', views.ProfileView.as_view(), name='profile'),
+   path('password', views.PasswordView.as_view(), name='password'),
 ]
 

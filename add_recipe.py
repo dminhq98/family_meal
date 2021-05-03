@@ -115,7 +115,7 @@ def add_recipe():
             dire.recipe = rec
             dire.content = i
             dire.save()
-        # if idx == 100: break
+        if idx == 100: break
 add_recipe()
 import random
 from django.db.models import Avg

@@ -19,7 +19,7 @@ from recipe.utils import load_search_initialize
 from recipe.models import Recipe, ImageRecipe, User
 DMM_CONF_PATH = "recipe/config/dmm_config.json"
 # search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
-# path = "test/image.jpeg"
+path = "test/image.jpeg"
 # img = Image.open(path).convert("RGB")
 # top = searche_image.search_topk(img, k=20)
 # res = [top[str(i)][0] for i in range(len(top))]
@@ -34,10 +34,13 @@ DMM_CONF_PATH = "recipe/config/dmm_config.json"
 #       pass
 # print(recipes)
 
-fav = Favore.objects.filter(user=User.objects.get(id=3), recipe=Recipe.objects.get(id=16))
-print(fav)
-print(len(fav))
-if len(fav):
-   fav.delete()
-else:
-   print(1)
+# fav = Favore.objects.filter(user=User.objects.get(id=3), recipe=Recipe.objects.get(id=16))
+# print(fav)
+# print(len(fav))
+# if len(fav):
+#    fav.delete()
+# else:
+#    print(1)
+
+a = Recipe.objects.filter(status=0, user=User.objects.get(id=3)).count()
+print(a)

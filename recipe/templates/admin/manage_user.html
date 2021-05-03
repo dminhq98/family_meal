@@ -10,7 +10,20 @@ Manage User
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h4 class="card-title"> Simple Table</h4>
+                <h4 class="card-title"> Manage User</h4>
+                  <select name="form" class="form-control" onchange="location = this.value;">
+                      <option value = "/manage_user">All</option>
+                      {% if request.path == '/user_active' %}
+                      <option selected value="/user_active" >Active</option>
+                      {% else %}
+                      <option value="/user_active" >Active</option>
+                      {% endif %}
+                      {% if request.path == '/user_disable' %}
+                      <option selected value="/user_disable" >Disable</option>
+                      {% else %}
+                      <option value="/user_disable" >Disable</option>
+                      {% endif %}
+                  </select>
               </div>
               <div class="card-header">
                 <form>

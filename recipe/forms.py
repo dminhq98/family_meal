@@ -1,7 +1,7 @@
 from django import forms
 import re
 from recipe.models import User
-
+from django.contrib.auth.forms import PasswordChangeForm
 
 class RegistrationForm(forms.Form):
     username = forms.CharField(label='User name')
@@ -38,3 +38,6 @@ class RegistrationForm(forms.Form):
         user.set_password(self.cleaned_data['password1'])
         user.level = 2
         user.save()
+
+# class PassForm(PasswordChangeForm):
+
