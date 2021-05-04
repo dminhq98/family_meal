@@ -557,6 +557,8 @@ class ManageUserDisableView(View):
 class ProfileView(View):
 
    def get(self, request):
+      if request.user.level ==2:
+         return render(request, 'pages/profile.html')
       return render(request, 'admin/profile.html')
 
    def post(self, request):
@@ -569,11 +571,16 @@ class ProfileView(View):
       user.save()
       return HttpResponseRedirect(request.path)
 
+from django.contrib.auth.decorators import login_required
+
+
 class PasswordView(View):
 
    def get(self, request):
       form = PasswordChangeForm(request.user)
-      return render(request, 'admin/change_password.html', {'form':form})
+      return render(request, 'admin/change_password.html', {
+         'form': form
+      })
 
    def post(self, request):
       form = PasswordChangeForm(request.user, request.POST)
@@ -581,15 +588,13 @@ class PasswordView(View):
          user = form.save()
          update_session_auth_hash(request, user)  # Important!
          messages.success(request, 'Your password was successfully updated!')
-         return redirect('/password')
+         return HttpResponseRedirect(request.path)
       else:
          messages.error(request, 'Please correct the error below.')
-         return redirect('/password')
 
 def change_password(request):
    if request.method == 'POST':
       form = PasswordChangeForm(request.user, request.POST)
-      form.fields['old_password'].widget.attrs = {'class': 'form-control'}
       if form.is_valid():
          user = form.save()
          update_session_auth_hash(request, user)  # Important!
@@ -599,11 +604,6 @@ def change_password(request):
          messages.error(request, 'Please correct the error below.')
    else:
       form = PasswordChangeForm(request.user)
-      if request.user.level == 2:
-         return render(request, 'pages/change_password.html', {
-            'form': form
-         })
-      else:
-         return render(request, 'admin/change_password.html', {
-            'form': form
-         })
+      return render(request, 'pages/change_password.html', {
+         'form': form
+      })

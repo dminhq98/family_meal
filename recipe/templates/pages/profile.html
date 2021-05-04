@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}
+Favore Recipe
+{% endblock %}
+
+{% block content %}
+<!-- Product Section Begin -->
+    <section class="product spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-5">
+                    <div class="sidebar">
+                        <div class="sidebar__item">
+                            <h4>{{user.username}}</h4>
+                            <ul>
+                               <li><a href="/add">Add recipe</a></li>
+                                <li><a href="/share_recipe">Shared recipes</a></li>
+                                <li><a href="/favore_recipe">Favorite recipes</a></li>
+                                <li><a href="/shop_list">Shopping List</a></li>
+                                <li><a href="/profile">Profile</a></li>
+                                <li><a href="/change_password">Change Password</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 col-md-7">
+                  <div class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-user">
+            <div class="card-header">
+              <h5 class="card-title">Edit Profile</h5>
+            </div>
+            <div class="card-body">
+              <form id="profile" action="{% url 'profile' %}" method='POST'>
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-md-5 pr-1">
+                    <div class="form-group">
+                      <label>Username</label>
+                      <input type="text" class="form-control" disabled="" placeholder="Username" value="{{user.username}}">
+                    </div>
+                  </div>
+                  <div class="col-md-5 pl-1">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Email address</label>
+                      <input name="email" type="email" class="form-control" placeholder="Email" value="{{user.email}}">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 pr-1">
+                    <div class="form-group">
+                      <label>Full Name</label>
+                      <input name="name" type="text" class="form-control" placeholder="Full Name" required value="{{user.name}}">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Address</label>
+                      <input name="address" type="text" class="form-control" placeholder="Home Address" required value="{{user.address}}">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 pr-1">
+                    <div class="form-group">
+                      <label>Birth Day</label>
+                      <input name="birthday" type="date" class="form-control" placeholder="Birth Day" required value="{{user.birthday|date:'Y-m-d'}}">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>About Me</label>
+                      <textarea name="description" class="form-control textarea" form="profile">{% if user.description %}{{user.description}}{% endif %}</textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="update ml-auto mr-auto">
+                    <button type="submit" class="btn btn-primary btn-round">Update Profile</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<!-- Product Section End -->
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
