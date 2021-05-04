@@ -39,7 +39,7 @@ class IngredientSearch:
         self.match_rec = []
         self.time_reqs = []
 
-        recipes = Recipe.objects.all()
+        recipes = Recipe.objects.filter(status=1)
         for rec in recipes:
             ing = [i.food.id for i in rec.recipe_match.all()]
             self.ingredients.append(ing)

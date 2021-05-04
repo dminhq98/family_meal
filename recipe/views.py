@@ -37,9 +37,9 @@ class HomePageView(View):
             }
             return render(request, 'admin/home.html', data)
 
-      new_recipe1 = Recipe.objects.all().order_by('-create_at')[:3]
-      new_recipe2 = Recipe.objects.all().order_by('-create_at')[3:6]
-      fastest_recipes = Recipe.objects.filter(total__contains='min').order_by('total')[:6]
+      new_recipe1 = Recipe.objects.filter(status=1).order_by('-create_at')[:3]
+      new_recipe2 = Recipe.objects.filter(status=1).order_by('-create_at')[3:6]
+      fastest_recipes = Recipe.objects.filter(total__contains='min', status=1).order_by('total')[:6]
       fastest_recipe1 = fastest_recipes[:3]
       fastest_recipe2 = fastest_recipes[3:6]
       top_rate = Recipe.objects.order_by('-rate')[:6]
@@ -84,7 +84,7 @@ class RecipeDetailView(View):
       servings = rec.servings
       user_ingr = [i.content for i in rec.ingredient.all()]
       ingredients = IngredientList(user_ingr)
-      related_recipe = Recipe.objects.filter(category__name__in= [i.name for i in rec.category.all()] ).distinct()[:3]
+      related_recipe = Recipe.objects.filter(category__name__in= [i.name for i in rec.category.all()], status=1).distinct()[:3]
       categorys = [i.name for i in rec.category.all()]
       categorys = ','.join(categorys)
       response_data = {
@@ -97,7 +97,7 @@ class RecipeDetailView(View):
          "categorys":categorys
       }
       if request.user.is_authenticated:
-         fav = Favore.objects.filter(user=request.user, recipe=Recipe.objects.get(id=pk))
+         fav = Favore.objects.filter(user=request.user, recipe=Recipe.objects.get(id=pk), status=1)
          if len(fav):
             response_data['favore'] = True
       return render(request, 'pages/recipe_detail.html', response_data)
@@ -146,7 +146,7 @@ class SearchImageRecipeView(View):
          for i in res:
             try:
                img_rec = ImageRecipe.objects.get(images=i)
-               if img_rec.recipe not in recipes:
+               if img_rec.recipe not in recipes and img_rec.recipe.status == 1:
                   recipes.append(img_rec.recipe)
             except:
                pass
@@ -163,7 +163,7 @@ class SearchImageRecipeView(View):
             for i in res:
                try:
                   img_rec = ImageRecipe.objects.get(images=i)
-                  if img_rec.recipe not in recipes:
+                  if img_rec.recipe not in recipes and img_rec.recipe.status == 1:
                      recipes.append(img_rec.recipe)
                except:
                   pass
@@ -195,7 +195,7 @@ class SearchKeywordRecipeView(TemplateView):
 
       key_word = request.POST['key_word']
 
-      rec = Recipe.objects.filter(Q(name__contains=key_word) | Q(description__contains=key_word))[:12]
+      rec = Recipe.objects.filter(status=1).filter(Q(name__contains=key_word) | Q(description__contains=key_word))[:12]
 
       return render(request, 'pages/search_keyword.html',{'recipes': rec, 'key_word': key_word})
 

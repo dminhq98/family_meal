@@ -34,6 +34,7 @@ class Recipe(models.Model):
     images = models.ImageField(null=True, upload_to='images')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_recipe')
     status = models.IntegerField(default=1)
+    source = models.TextField(null=True)
     create_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):  # pragma: no cover
