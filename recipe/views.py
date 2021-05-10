@@ -19,7 +19,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 # Create your views here.
 DMM_CONF_PATH = "recipe/config/dmm_config.json"
-# search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
+search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
 # from recipe.utils import IngredientSearch
 # search_ingredient = IngredientSearch()
 
@@ -84,7 +84,7 @@ class RecipeDetailView(View):
       servings = rec.servings
       user_ingr = [i.content for i in rec.ingredient.all()]
       ingredients = IngredientList(user_ingr)
-      related_recipe = Recipe.objects.filter(category__name__in= [i.name for i in rec.category.all()], status=1).distinct()[:3]
+      related_recipe = Recipe.objects.filter(category__name__in= [i.name for i in rec.category.all()], status=1).exclude(id=pk).distinct()[:3]
       categorys = [i.name for i in rec.category.all()]
       categorys = ','.join(categorys)
       response_data = {
@@ -583,6 +583,10 @@ class PasswordView(View):
       })
 
    def post(self, request):
+      # return render(request, 'test.html', {
+      #    'data': request.POST,
+      #    'a':request.user,
+      # })
       form = PasswordChangeForm(request.user, request.POST)
       if form.is_valid():
          user = form.save()
@@ -595,6 +599,7 @@ class PasswordView(View):
 def change_password(request):
    if request.method == 'POST':
       form = PasswordChangeForm(request.user, request.POST)
+
       if form.is_valid():
          user = form.save()
          update_session_auth_hash(request, user)  # Important!

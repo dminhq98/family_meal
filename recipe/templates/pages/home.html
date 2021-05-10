@@ -177,34 +177,33 @@ Home
                 <div class="col-lg-4 col-md-4 col-sm-6">
                     <div class="blog__item">
                         <div class="blog__item__pic">
-                            <img src="{{rec.images.url}}" alt="{{rec.name}}">
+                            <img src="{{rec.images.url}}" alt="{{rec.name}}" style="height:25rem;object-fit: cover;">
                         </div>
                         <div class="blog__item__text">
                             <ul>
                                 <li><i class="fa fa-calendar-o"></i> {{rec.create_at|date:"d-m-Y"}}</li>
                                 <li><i class="fa fa-comment-o"></i> {{rec.recipe_review.count}}</li>
                             </ul>
-                            <h5><a href="detail/{{rec.id}}">{{rec.name}}</a></h5>
+                            <h5><a href="/detail/{{rec.id}}">{{rec.name}}</a></h5>
                             <p>{{rec.description}}</p>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-
             <div class="row">
                 {% for rec in new_recipe1 %}
                 <div class="col-lg-4 col-md-4 col-sm-6">
                     <div class="blog__item">
                         <div class="blog__item__pic">
-                            <img src="{{rec.images.url}}" alt="">
+                            <img src="{{rec.images.url}}" alt="{{rec.name}}" style="height:25rem;object-fit: cover;">
                         </div>
                         <div class="blog__item__text">
                             <ul>
                                 <li><i class="fa fa-calendar-o"></i> {{rec.create_at|date:"d-m-Y"}}</li>
                                 <li><i class="fa fa-comment-o"></i> {{rec.recipe_review.count}}</li>
                             </ul>
-                            <h5><a href="#">{{rec.name}}</a></h5>
+                            <h5><a href="/detail/{{rec.id}}">{{rec.name}}</a></h5>
                             <p>{{rec.description}}</p>
                         </div>
                     </div>

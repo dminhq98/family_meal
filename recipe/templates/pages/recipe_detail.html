@@ -49,7 +49,9 @@ Recipe detail
                             <span><i class="fa fa-address-book" aria-hidden="true"></i> by <a href="#"> {{recipe.user.username}}</a></span>
                         </div>
                     </div>
-                    <p> {{recipe.description}}</p>
+                    <p> {{recipe.description}} {% if recipe.source %}(Source: <a href="{{recipe.source}}">{{recipe.source}}</a>{% endif %})</p>
+                        {% for cat in recipe.category.all %} <button type="button" class="btn btn-outline-light text-dark">{{cat.name}} &nbsp</button>
+                         {% endfor %}
 <!--                    <input type="text" id="form-tags-2" value="{{categorys}}" readonly disabled>-->
                     <hr>
                 </div>
@@ -59,7 +61,7 @@ Recipe detail
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <img class="product__details__pic__item--large"
-                                src="{{recipe.images.url}}" alt="">
+                                src="{{recipe.images.url}}" alt="" style="height:25rem;object-fit: cover;">
                         </div>
                     </div>
                 </div>
