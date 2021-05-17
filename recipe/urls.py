@@ -29,6 +29,7 @@ urlpatterns = [
    path('recipe_active', views.ManageRecipeActiveView.as_view(), name='manage_recipe_active'),
    path('recipe_disable', views.ManageDisableActiveView.as_view(), name='manage_recipe_disable'),
    path('profile', views.ProfileView.as_view(), name='profile'),
+   path('set_auto', views.SetAutoLockAccount.as_view(), name='set_auto'),
    path('password', views.PasswordView.as_view(), name='password'),
 ]
 

@@ -1,10 +1,10 @@
-import json
+import os
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.views import View
 from django.http import HttpResponseRedirect
 from django.db.models import Avg
-from recipe.models import Recipe, Ingredient, Direction, Category, User, Review, ImageRecipe, ShopList, Favore
+from recipe.models import Recipe, Ingredient, Direction, Category, User, Review, ImageRecipe, ShopList, Favore, Config
 from recipe.forms import RegistrationForm
 from core.ingredient import IngredientList
 from recipe.utils import load_search_initialize, parseTimes, id_generator, parseStringTimes
@@ -19,7 +19,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 # Create your views here.
 DMM_CONF_PATH = "recipe/config/dmm_config.json"
-search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
+# search_ingredient, searche_image = load_search_initialize(config_img_path=DMM_CONF_PATH)
 # from recipe.utils import IngredientSearch
 # search_ingredient = IngredientSearch()
 
@@ -445,10 +445,11 @@ class ManageRecipeView(View):
    def post(self, request):
       pk = request.POST['pk']
       rec = Recipe.objects.get(id=pk)
+      set_auto = Config.objects.get(id=1).num_recipe
       if rec.status == 0:
          rec.status = 1
          rec.save()
-         if Recipe.objects.filter(status=0, user=rec.user).count() < 2:
+         if Recipe.objects.filter(status=0, user=rec.user).count() < set_auto:
             user = User.objects.get(id=rec.user.id)
             user.status = 1
             user.is_active = 1
@@ -457,7 +458,7 @@ class ManageRecipeView(View):
       else:
          rec.status = 0
          rec.save()
-         if Recipe.objects.filter(status=0, user=rec.user).count() > 1:
+         if Recipe.objects.filter(status=0, user=rec.user).count() >= set_auto:
             user = User.objects.get(id=rec.user.id)
             user.status = 0
             user.is_active = 0
@@ -594,7 +595,9 @@ class PasswordView(View):
          messages.success(request, 'Your password was successfully updated!')
          return HttpResponseRedirect(request.path)
       else:
-         messages.error(request, 'Please correct the error below.')
+         return render(request, 'admin/change_password.html', {
+            'form': form
+         })
 
 def change_password(request):
    if request.method == 'POST':
@@ -606,9 +609,24 @@ def change_password(request):
          messages.success(request, 'Your password was successfully updated!')
          return redirect('/change_password')
       else:
-         messages.error(request, 'Please correct the error below.')
+         return render(request, 'admin/change_password.html', {
+            'form': form
+         })
    else:
       form = PasswordChangeForm(request.user)
       return render(request, 'pages/change_password.html', {
          'form': form
       })
+
+class SetAutoLockAccount(View):
+
+   def get(self, request):
+      set_auto = Config.objects.get(id=1).num_recipe
+      return render(request, 'admin/set_auto_lock.html', {'set_auto':set_auto})
+
+   def post(self, request):
+      conf = Config.objects.get(id=1)
+      set_auto = request.POST['set_auto']
+      conf.num_recipe = int(set_auto)
+      conf.save()
+      return HttpResponseRedirect(request.path)

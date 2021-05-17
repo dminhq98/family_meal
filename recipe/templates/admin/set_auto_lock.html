@@ -1,0 +1,41 @@
+{% extends "base_admin.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+  <div class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-user">
+            <div class="card-header">
+              <h5 class="card-title">Set Auto Lock Account</h5>
+            </div>
+            <div class="card-body">
+              <form id="autolock" action="{% url 'set_auto' %}" method='POST'>
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-md-5 pr-1">
+                    <div class="form-group">
+                      <label>Number disable recipe</label>
+                      <input name="set_auto" type="number" class="form-control"  value="{{set_auto}}" min="1" step="1">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-5 update ml-auto mr-auto">
+                    <button type="submit" class="btn btn-primary btn-round">Update</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

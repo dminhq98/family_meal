@@ -155,3 +155,10 @@ class Nutrition(models.Model):
 
     def __str__(self):  # pragma: no cover
         return f"{self.recipe}"
+
+class Config(models.Model):
+
+    num_recipe = models.IntegerField(default=2)
+
+    def __str__(self):  # pragma: no cover
+        return f"#{self.id} {self.num_recipe}"
